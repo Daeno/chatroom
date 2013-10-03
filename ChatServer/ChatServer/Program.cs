@@ -60,7 +60,7 @@ namespace ChatServer
             for (int i = 0; i < 20; i++) BCGroupList[i] = new List<string>();
 
                 while (true)
-                {
+                {   
                     counter += 1;
                     clientSocket = serverSocket.AcceptTcpClient();
                     byte[] byteFrom = new byte[clientSocket.ReceiveBufferSize];

@@ -26,8 +26,7 @@
         <Button x:Name="buttonSend" Margin="10" Content="send message" FontSize="20" Grid.Column="2" Grid.Row="3" Click="buttonSend_Click" />
         <Button x:Name="buttonConnect" Grid.Column="2" Grid.Row="1" Margin="10,10,10,5" Content="Connect to Server" Click="buttonConnect_Click" />
         <TextBox x:Name="userName" Text="Your_Name" Margin="10" Grid.Column="2" Background="White" MouseEnter="userName_MouseEnter" TextChanged="userName_TextChanged" />
-        <TextBox x:Name="chatText" HorizontalAlignment="Left" Height="33" Margin="0,10,0,0" Grid.Row="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="415" Grid.ColumnSpan="2" KeyDown="chatText_KeyDown"/>
-
+        <TextBox x:Name="chatText" HorizontalAlignment="Left" Height="33" Margin="10,10,0,0" Grid.Row="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="405" Grid.ColumnSpan="2" KeyDown="chatText_KeyDown"/>
 
         <ListView Grid.Column="2" Height="291" Margin="10,0" Grid.Row="2" VerticalAlignment="Bottom" 
                   x:Name = "userListBinding" SelectionChanged="userListBinding_SelectionChanged" ItemsSource="{Binding}"
@@ -50,5 +49,6 @@
 
 
         </ListView>
+  
     </Grid>
 </Window>

@@ -144,6 +144,13 @@ namespace ChatClient_WPF
 
             //test binding
             userList.Add("fuck ytou");
+
+            TextBlock item = new TextBlock();
+            item.Text = "badfs";
+
+        
+           // userListBox.Items.Add(item);
+            
         }
 
         public void msg(string s)
@@ -168,9 +175,9 @@ namespace ChatClient_WPF
             //userList.r
             //onlineList.RemoveAt(onlineList.Count());
             updateUserListFromSvr();
-            //userListViewBinding();
+            userListViewBinding();
 
-            MessageBox.Show(userList[0]);
+            //MessageBox.Show(userList[0]);
         }
         
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -199,29 +206,28 @@ namespace ChatClient_WPF
        
 
 
-        int count = 0;
+        int counttt = 0;
         private void updateUserListFromSvr()
         {
-            MessageBox.Show("updateUserListFromSvr called");
+            
 
             //test
-            String[] strUL = { "abc", "def", "ghi", "jklm" };
-            userList.Add(strUL[count]);
-            count ++;
-
-
-            /*
-            foreach (String user in userList)
+            if (userListBinding.CheckAccess())
             {
-                if (!onlineList.Contains(user))
-                    userList.Remove(user);
+
+               
+                 userList = new ObservableCollection<String>(onlineList.ToArray());
+            }
+            else
+            {
+                userListBinding.Dispatcher.Invoke(new Action(updateUserListFromSvr));
             }
 
-            foreach (String user in onlineList)
-            {
-                if (!userList.Contains(user))
-                    userList.Add(user);
-            }*/
+            //userListBox.
+
+
+
+           
 
            // userList = new ObservableCollection<String>(onlineList.ToArray());
         }
@@ -231,9 +237,16 @@ namespace ChatClient_WPF
 
         private void userListViewBinding()
         {
-            ListView lv = userListBinding;
-            lv.DataContext = userList;
-            //MessageBox.Show("finish userListViewBinding");
+            if (userListBinding.CheckAccess())
+            {
+
+               ListView lv = userListBinding;
+               lv.DataContext = userList;
+            }
+            else
+            {
+                userListBinding.Dispatcher.Invoke(new Action(userListViewBinding));
+            }
         }
 
 
@@ -246,7 +259,7 @@ namespace ChatClient_WPF
 
         private void HandleUserDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show(userListBinding.SelectedItem.ToString());
+            //MessageBox.Show(userListBinding.SelectedItem.ToString());
         }
 
 

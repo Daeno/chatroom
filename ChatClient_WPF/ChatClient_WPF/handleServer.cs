@@ -38,6 +38,7 @@ namespace ChatClient_WPF
                     //MessageBox.Show("hihi");
                     if (clientSocket.Connected)
                     {
+                        
                         netstream = clientSocket.GetStream();
                         byte[] inData = new byte[clientSocket.ReceiveBufferSize];
                         netstream.Read(inData, 0, clientSocket.ReceiveBufferSize);
@@ -64,7 +65,7 @@ namespace ChatClient_WPF
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.ToString());
+                    MessageBox.Show(e.ToString());
                     return;
                 }
             }
