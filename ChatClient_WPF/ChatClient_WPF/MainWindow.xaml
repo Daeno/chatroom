@@ -2,6 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="464.925" Width="617.537">
+    <Window.Resources>
+        <Style x:Key="UserListViewItemStyleEvent" TargetType="{x:Type ListViewItem}" >
+            <EventSetter Event="MouseDoubleClick" Handler="HandleUserDoubleClick" />
+        </Style>
+
+    </Window.Resources>
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40*"/>
@@ -14,11 +22,33 @@
             <ColumnDefinition Width="237*"/>
             <ColumnDefinition Width="190*"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="chatDisplay" Text="Welcome to the chat room" Foreground="Black" Background="White" Grid.ColumnSpan="2" Grid.Row="2" ScrollViewer.CanContentScroll="True" Margin="10,0,0,0" Grid.Column="1" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AllowDrop="False"/>
+        <TextBox x:Name="chatDisplay" Text="Welcome to the chat room" Foreground="Black" Background="White" Grid.ColumnSpan="3" Grid.Row="2" ScrollViewer.CanContentScroll="True" Margin="10,0,183,0" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AllowDrop="False"/>
         <Button x:Name="buttonSend" Margin="10" Content="send message" FontSize="20" Grid.Column="2" Grid.Row="3" Click="buttonSend_Click" />
         <Button x:Name="buttonConnect" Grid.Column="2" Grid.Row="1" Margin="10,10,10,5" Content="Connect to Server" Click="buttonConnect_Click" />
         <TextBox x:Name="userName" Text="Your_Name" Margin="10" Grid.Column="2" Background="White" MouseEnter="userName_MouseEnter" TextChanged="userName_TextChanged" />
         <TextBox x:Name="chatText" HorizontalAlignment="Left" Height="33" Margin="0,10,0,0" Grid.Row="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="415" Grid.ColumnSpan="2" KeyDown="chatText_KeyDown"/>
-        <ListBox x:Name="UserList" HorizontalAlignment="Left" Height="292" Margin="10,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="163"/>
+
+
+        <ListView Grid.Column="2" Height="291" Margin="10,0" Grid.Row="2" VerticalAlignment="Bottom" 
+                  x:Name = "userListBinding" SelectionChanged="userListBinding_SelectionChanged" ItemsSource="{Binding}"
+                  ItemContainerStyle="{StaticResource UserListViewItemStyleEvent}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+
+            <ListView.ItemTemplate >
+
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock Text="{Binding}" Name="textBlockUserName" Focusable="true" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+
+        </ListView>
     </Grid>
 </Window>

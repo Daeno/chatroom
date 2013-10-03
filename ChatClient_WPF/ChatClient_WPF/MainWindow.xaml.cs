@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Net.Sockets;
 using System.Threading;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace ChatClient_WPF
 {
@@ -57,6 +59,9 @@ namespace ChatClient_WPF
         public MainWindow()
         {
             InitializeComponent();
+
+            updateUserListFromSvr();
+            userListViewBinding();
         }
         public bool connectToServer()
         { return clientSocket.Connected; }
@@ -163,6 +168,46 @@ namespace ChatClient_WPF
         {
 
         }
+
+
+
+
+
+        ObservableCollection<String> userList;
+        ObservableCollection<String> friendList;
+        ObservableCollection<String> blackList;
+
+        private void updateUserListFromSvr()
+        {
+            //test
+            String[] strUL = { "abc", "def", "ghi", "jklm" };
+            userList = new ObservableCollection<String>(strUL);
+        }
+        private void updateFriendListFromSvr() { }
+        private void updateBlackListFromSvr() { }
+
+
+        private void userListViewBinding()
+        {
+            ListView lv = userListBinding;
+            lv.DataContext = userList;
+        }
+
+
+
+        //Binding needed for userListView
+        private void userListBinding_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+        }
+
+
+        private void HandleUserDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show(userListBinding.SelectedItem.ToString());
+        }
+
+
+
 
 
     }
