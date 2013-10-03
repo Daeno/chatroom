@@ -31,7 +31,8 @@ namespace ChatClient_WPF
         {
             InitializeComponent();
         }
-
+        public bool connectToServer()
+        { return clientSocket.Connected; }
 
 
         private void userName_MouseEnter(object sender, MouseEventArgs e)
@@ -46,7 +47,7 @@ namespace ChatClient_WPF
             try
             {
                 userName.IsReadOnly = true;
-                clientSocket.Connect("127.0.0.1", 8888);
+                clientSocket.Connect("140.112.18.208", 8888);
                 netstream = clientSocket.GetStream();
                 byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+"\x01").ToCharArray());
                 netstream.Write(outdata, 0, outdata.Length);
@@ -62,12 +63,27 @@ namespace ChatClient_WPF
 
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
-            string outdata = userName.Text.ToString() + "\x01" + chatText.Text.ToString() + "\x01";
+            if (connectToServer())
+            {
+                try
+                {
+                    string outdata = userName.Text.ToString() + "\x01" + chatText.Text.ToString() + "\x01";
+                    byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
+                    outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
+                    netstream.Write(outSt, 0, outdata.Length);
+                    netstream.Flush();
+                }
+                catch
+                {
+                    MessageBox.Show("Stupid Daeno!");
+                }
+            }
+            else
+            {
+                indata = ">> "+ userName.Text.ToString() + " says: " + chatText.Text.ToString();
+                msg();
+            }
             chatText.Text = null;
-            byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
-            outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
-            netstream.Write(outSt,0,outdata.Length);
-            netstream.Flush();
         }
 
         private void msg()
@@ -75,6 +91,7 @@ namespace ChatClient_WPF
             if(chatDisplay.Dispatcher.CheckAccess())
             {
                 chatDisplay.Text = chatDisplay.Text + Environment.NewLine + indata;
+                chatDisplay.ScrollToEnd();
             }
             else
             {
@@ -113,6 +130,19 @@ namespace ChatClient_WPF
         {
             this.clientSocket.Close();
             base.OnClosing(e);
+        }
+
+        private void chatText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                buttonSend.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent,buttonSend));
+            }
+        }
+
+        private void userName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
 
 

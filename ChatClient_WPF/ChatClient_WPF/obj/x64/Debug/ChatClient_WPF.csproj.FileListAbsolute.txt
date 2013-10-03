@@ -37,3 +37,16 @@ C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\Chat
 C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.g.resources
 C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.Properties.Resources.resources
 C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe.config
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.exe
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.pdb
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.pdb
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.baml
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.g.cs
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\App.g.cs
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF_MarkupCompile.cache
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.g.resources
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.Properties.Resources.resources
+C:\Users\steve1012\Desktop\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache

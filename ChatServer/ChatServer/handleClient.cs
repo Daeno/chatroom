@@ -55,7 +55,8 @@ namespace ChatServer
                     Program.clientList.Remove(clName);
                     for (int i = 0; i < 20; i++ )
                         Program.BCGroupList[i].Remove(clName);
-                    Console.WriteLine(e.ToString());
+                    Program.broadcastChat(clName + " has left.", clName, false);
+                    //Console.WriteLine(e.ToString());
                     return;
                 }
             }
