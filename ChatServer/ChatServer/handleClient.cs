@@ -41,7 +41,7 @@ namespace ChatServer
                         //int len = dataString.Substring(0,dataString.IndexOf("$"));
                         dataString = dataString.Substring(0,dataString.IndexOf('\x01'));
                         Console.WriteLine("From " + clName + " - data: " + dataString);
-                        Program.broadcastChat(dataString, clName, true);
+                        Program.broadcastChat(dataString, clName,0, true);
                     }
                     else
                     {
@@ -55,7 +55,7 @@ namespace ChatServer
                     Program.clientList.Remove(clName);
                     for (int i = 0; i < 20; i++ )
                         Program.BCGroupList[i].Remove(clName);
-                    Program.broadcastChat(clName + " has left.", clName, false);
+                    Program.broadcastChat(clName + " has left.", clName,0, false);
                     //Console.WriteLine(e.ToString());
                     return;
                 }

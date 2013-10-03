@@ -47,10 +47,13 @@ namespace ChatClient_WPF
     };
     public partial class MainWindow : Window
     {
+        char spCh = '\x01';
         TcpClient clientSocket = new TcpClient();
         NetworkStream netstream = default(NetworkStream);
-        string indata = null;
+        //string indata = null;
         bool fir = true;
+        int BCGroupN = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -90,11 +93,12 @@ namespace ChatClient_WPF
                 userName.IsReadOnly = true;
                 clientSocket.Connect("140.112.18.208", 8888);
                 netstream = clientSocket.GetStream();
-                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+"\x01").ToCharArray());
+                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+ spCh).ToCharArray());
+                encodeMsg(ref outdata, MsgType.C_ASK_REGISTER);
                 netstream.Write(outdata, 0, outdata.Length);
                 netstream.Flush();
-                Thread ctThread = new Thread(getMessage);
-                ctThread.Start();
+                handleServer hs = new handleServer();
+                hs.start(clientSocket, userName.Text.ToString(), spCh,this);
             }
             catch
             {
@@ -108,7 +112,7 @@ namespace ChatClient_WPF
             {
                 try
                 {
-                    string outdata = userName.Text.ToString() + "\x01" + chatText.Text.ToString() + "\x01";
+                    string outdata = userName.Text.ToString() + spCh + chatText.Text.ToString() + spCh;
                     byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
                     outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
                     netstream.Write(outSt, 0, outdata.Length);
@@ -121,52 +125,26 @@ namespace ChatClient_WPF
             }
             else
             {
-                indata = ">> "+ userName.Text.ToString() + " says: " + chatText.Text.ToString();
-                msg();
+                string indata = ">> "+ userName.Text.ToString() + " says: " + chatText.Text.ToString();
+                msg(indata);
             }
             chatText.Text = null;
         }
 
-        private void msg()
+        public void msg(string s)
         {
             if(chatDisplay.Dispatcher.CheckAccess())
             {
-                chatDisplay.Text = chatDisplay.Text + Environment.NewLine + indata;
+                chatDisplay.Text = chatDisplay.Text + Environment.NewLine + s;
                 chatDisplay.ScrollToEnd();
             }
             else
             {
-                chatDisplay.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(msg));
+                chatDisplay.Dispatcher.Invoke(DispatcherPriority.Normal, new Action<string>(msg),s);
             }
         }
 
-        private void getMessage()
-        {
-            while (true)
-            {
-                try
-                {
-                    if (clientSocket.Connected)
-                    {
-                        netstream = clientSocket.GetStream();
-                        byte[] inStream = new byte[clientSocket.ReceiveBufferSize];
-                        netstream.Read(inStream, 0, clientSocket.ReceiveBufferSize);
-                        indata = System.Text.Encoding.ASCII.GetString(inStream);
-                        indata = indata.Substring(0, indata.IndexOf('\x01'));
-                        msg();
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                catch(Exception e)
-                {
-                    //MessageBox.Show(e.ToString());
-                    return;
-                }
-            }
-        }
+        
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             this.clientSocket.Close();

@@ -43,9 +43,9 @@ namespace ChatServer
         public static List<string>[] BCGroupList = new List<string>[20];
         static void Main(string[] args)
         {
-            byte[] test =System.Text.Encoding.ASCII.GetBytes("\x00\x02\x03");
-            parseMsg(ref test);
-            encodeMsg(ref test,MsgType.S_REGISTER_RESULT);
+            //byte[] test =System.Text.Encoding.ASCII.GetBytes("\x00\x02\x03");
+            //parseMsg(ref test);
+            //encodeMsg(ref test,MsgType.S_REGISTER_RESULT);
             string hostname = Dns.GetHostName();
             IPAddress serverIP = Dns.Resolve(hostname).AddressList[0];
             //Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -69,17 +69,21 @@ namespace ChatServer
                     NetworkStream incomingStream = clientSocket.GetStream();
                     incomingStream.Read(byteFrom, 0, clientSocket.SendBufferSize);
                     
-                    clientName = System.Text.Encoding.ASCII.GetString(byteFrom);
-                    clientName = clientName.Substring(0, clientName.IndexOf(spCh));
+                    MsgType tt = parseMsg(ref byteFrom);
+                    if (tt == MsgType.C_ASK_REGISTER)
+                    {
+                        clientName = System.Text.Encoding.ASCII.GetString(byteFrom);
+                        clientName = clientName.Substring(0, clientName.IndexOf(spCh));
 
-                    clientList.Add(clientName, clientSocket);
-                    BCGroupList[0].Add(clientName);
+                        clientList.Add(clientName, clientSocket);
+                        BCGroupList[0].Add(clientName);
 
-                    broadcastChat(clientName + " has joined the chatroom.", clientName, false);
+                        broadcastChat(clientName + " has joined the chatroom.", clientName,0, false);
 
-                    Console.WriteLine(clientName + " has joined.");
-                    handleClient cc = new handleClient();
-                    cc.startClient(clientSocket, clientName);
+                        Console.WriteLine(clientName + " has joined.");
+                        handleClient cc = new handleClient();
+                        cc.startClient(clientSocket, clientName);
+                    }
                     
                 }
         }
@@ -103,18 +107,19 @@ namespace ChatServer
         }
 
 
-        public static void broadcastChat(string msg,string usrName, bool showName)
+        public static void broadcastChat(string msg,string usrName, int gpn, bool showName)
         {
             
             byte[] sendingData = new byte[65536];
             if (showName)
                 {
-                    sendingData = System.Text.Encoding.ASCII.GetBytes((">> " + usrName + " says: " + msg + spCh).ToCharArray());
+                    sendingData = System.Text.Encoding.ASCII.GetBytes((gpn.ToString() + spCh + ">> " + usrName + " says: " + msg + spCh).ToCharArray());
                 }
                 else
                 {
-                    sendingData = System.Text.Encoding.ASCII.GetBytes((">> "+ msg + spCh).ToCharArray());
+                    sendingData = System.Text.Encoding.ASCII.GetBytes((gpn.ToString() + spCh + ">> " + msg + spCh).ToCharArray());
                 }
+            encodeMsg(ref sendingData, MsgType.S_MSG_FROM_BCGROUP);
             broadcastGP(0, sendingData);
         }
         public static void broadcastGP(int gpn,byte[] data)
