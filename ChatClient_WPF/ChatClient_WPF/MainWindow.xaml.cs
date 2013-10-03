@@ -21,6 +21,30 @@ namespace ChatClient_WPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    public enum MsgType : byte
+    {
+
+        //Message Types from Client to Server, 0~127
+        C_ASK_REGISTER = 0,
+        C_ASK_USERNAME_EXIST,
+        C_ASK_ONLINE,
+        C_ADD_BCGROUP,
+        C_MSG_TO_BCGROUP,
+        C_ADD_FRIEND,
+        C_REMOVE_FRIEND,
+
+
+        //Message Types from Server to Client , 128~255
+        S_REGISTER_RESULT = 128,
+        S_LOGIN_FAILED,
+        S_LOGIN_SUCC,
+        S_ADD_TO_BCGROUP,
+        S_MSG_FROM_BCGROUP,
+        S_ONLINE_LIST,
+        S_ADD_FRIEND,
+        S_REMOVE_FRIEND
+    };
     public partial class MainWindow : Window
     {
         TcpClient clientSocket = new TcpClient();
@@ -34,7 +58,24 @@ namespace ChatClient_WPF
         public bool connectToServer()
         { return clientSocket.Connected; }
 
-
+        public static MsgType parseMsg(ref byte[] indata)
+        {
+            MsgType type;
+            type = (MsgType)indata[0];
+            byte[] temp = new byte[indata.Length];
+            //for (int i = 0; i < indata.Length - 1; i++)
+            //    temp[i] = indata[i + 1];
+            Array.Copy(indata, 1, temp, 0, indata.Length - 1);
+            indata = temp;
+            return type;
+        }
+        public static void encodeMsg(ref byte[] indata, MsgType type)
+        {
+            byte[] output = new byte[indata.Length + 1];
+            output[0] = (byte)type;
+            Array.Copy(indata, 0, output, 1, indata.Length);
+            indata = output;
+        }
         private void userName_MouseEnter(object sender, MouseEventArgs e)
         {
             if(fir)
