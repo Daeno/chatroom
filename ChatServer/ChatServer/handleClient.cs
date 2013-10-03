@@ -12,10 +12,12 @@ namespace ChatServer
     {
         TcpClient clientSocket;
         string clName;
+        char spCh;
 
-        public void startClient(TcpClient tl, string name)
+        public void startClient(TcpClient tl, string name, char cc)
         {
             this.clientSocket = tl;
+            spCh = cc;
             this.clName = name;
 
             Thread ctThread = new Thread(clientRoutine);
@@ -34,14 +36,21 @@ namespace ChatServer
                         byte[] data = new byte[clientSocket.ReceiveBufferSize];
                         dataStream.Read(data, 0, clientSocket.ReceiveBufferSize);
 
-
-                        string dataString = System.Text.Encoding.ASCII.GetString(data);
-                        //only chatting
-                        dataString = dataString.Substring(dataString.IndexOf('\x01')+1);
-                        //int len = dataString.Substring(0,dataString.IndexOf("$"));
-                        dataString = dataString.Substring(0,dataString.IndexOf('\x01'));
-                        Console.WriteLine("From " + clName + " - data: " + dataString);
-                        Program.broadcastChat(dataString, clName,0, true);
+                        switch(Program.parseMsg(ref data))
+                        {
+                            case MsgType.C_MSG_TO_BCGROUP:
+                                string dataString = System.Text.Encoding.ASCII.GetString(data);
+                            //only chatting
+                                string[] commands = dataString.Split(spCh);
+                                //dataString = dataString.Substring(dataString.IndexOf('\x01')+1);
+                            //int len = dataString.Substring(0,dataString.IndexOf("$"));
+                                //dataString = dataString.Substring(0,dataString.IndexOf('\x01'));
+                                
+                                Console.WriteLine("From " + clName + " - data: " + commands[0]);
+                                Program.broadcastChat(commands[1], clName,int.Parse(commands[0]), true);
+                            break;
+                            
+                        }
                     }
                     else
                     {

@@ -42,12 +42,19 @@ namespace ChatClient_WPF
                         byte[] inData = new byte[clientSocket.ReceiveBufferSize];
                         netstream.Read(inData, 0, clientSocket.ReceiveBufferSize);
                         string message;
-                        if (ChatClient_WPF.MainWindow.parseMsg(ref inData) == MsgType.S_MSG_FROM_BCGROUP)
+
+                        MsgType ty = ChatClient_WPF.MainWindow.parseMsg(ref inData);
+                        message = System.Text.Encoding.ASCII.GetString(inData);
+                        string[] commands = message.Split(spCh);
+                        switch(ty)
                         {
-                            message = System.Text.Encoding.ASCII.GetString(inData);
-                            string[] commands = message.Split(spCh);
-                            int bcgp = int.Parse(commands[0]);
-                            window.msg(commands[1]);
+                            case MsgType.S_MSG_FROM_BCGROUP:
+                                int bcgp = int.Parse(commands[0]);
+                                window.msg(commands[1]);
+                            break;
+                            case MsgType.S_ONLINE_LIST:
+                                window.updateList(commands);
+                            break;
                         }
                     }
                     else

@@ -15,7 +15,7 @@ namespace ChatServer
         
         //Message Types from Client to Server, 0~127
             C_ASK_REGISTER = 0,
-            C_ASK_USERNAME_EXIST,
+            C_ASK_USERLIST,
             C_ASK_ONLINE,
             C_ADD_BCGROUP,
             C_MSG_TO_BCGROUP,
@@ -79,10 +79,11 @@ namespace ChatServer
                         BCGroupList[0].Add(clientName);
 
                         broadcastChat(clientName + " has joined the chatroom.", clientName,0, false);
-
+                        Thread.Sleep(550);
+                        broadcastList(0);
                         Console.WriteLine(clientName + " has joined.");
                         handleClient cc = new handleClient();
-                        cc.startClient(clientSocket, clientName);
+                        cc.startClient(clientSocket, clientName, spCh);
                     }
                     
                 }
@@ -106,6 +107,19 @@ namespace ChatServer
             indata = output;
         }
 
+        public static void broadcastList(int gpn)
+        {
+            int len = BCGroupList[gpn].Count();
+            string data = len.ToString();
+            foreach (string item in BCGroupList[0])
+            {
+                data += (string)(spCh + item);
+            }
+            data += (spCh);
+            byte[] outdata = System.Text.Encoding.ASCII.GetBytes(data);
+            encodeMsg(ref outdata, MsgType.S_ONLINE_LIST);
+            broadcastGP(0, outdata,MsgType.S_ONLINE_LIST);
+        }
 
         public static void broadcastChat(string msg,string usrName, int gpn, bool showName)
         {
@@ -120,19 +134,21 @@ namespace ChatServer
                     sendingData = System.Text.Encoding.ASCII.GetBytes((gpn.ToString() + spCh + ">> " + msg + spCh).ToCharArray());
                 }
             encodeMsg(ref sendingData, MsgType.S_MSG_FROM_BCGROUP);
-            broadcastGP(0, sendingData);
+            broadcastGP(0, sendingData , MsgType.S_MSG_FROM_BCGROUP);
         }
-        public static void broadcastGP(int gpn,byte[] data)
+        public static void broadcastGP(int gpn,byte[] data,MsgType ty)
         {
             
             foreach(string item in BCGroupList[gpn])
             {
                 TcpClient sendingClient = (TcpClient)clientList[item];
                 NetworkStream sendingStream = sendingClient.GetStream();
+                
                 sendingStream.Write(data, 0, data.Length);
                 sendingStream.Flush();
 
-                Console.WriteLine("Broadcasting to Group " + gpn.ToString());
+                Console.WriteLine("Broadcasting " + ty.ToString() + " to Group " + gpn.ToString() + " user:" + item);
+                //sendingStream.Close(0);
             }
         }
         

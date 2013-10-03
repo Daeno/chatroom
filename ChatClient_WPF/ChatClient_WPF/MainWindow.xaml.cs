@@ -29,7 +29,7 @@ namespace ChatClient_WPF
 
         //Message Types from Client to Server, 0~127
         C_ASK_REGISTER = 0,
-        C_ASK_USERNAME_EXIST,
+        C_ASK_USERLIST,
         C_ASK_ONLINE,
         C_ADD_BCGROUP,
         C_MSG_TO_BCGROUP,
@@ -54,8 +54,12 @@ namespace ChatClient_WPF
         NetworkStream netstream = default(NetworkStream);
         //string indata = null;
         bool fir = true;
-        int BCGroupN = 0;
+        List<string> onlineList = new List<string>();
+        ObservableCollection<String> userList = new ObservableCollection<string>();
+        ObservableCollection<String> friendList;
+        ObservableCollection<String> blackList;
 
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -81,7 +85,7 @@ namespace ChatClient_WPF
         {
             byte[] output = new byte[indata.Length + 1];
             output[0] = (byte)type;
-            Array.Copy(indata, 0, output, 1, indata.Length);
+            Array.Copy(indata, 0, output, 1, indata.Length );
             indata = output;
         }
         private void userName_MouseEnter(object sender, MouseEventArgs e)
@@ -117,9 +121,10 @@ namespace ChatClient_WPF
             {
                 try
                 {
-                    string outdata = userName.Text.ToString() + spCh + chatText.Text.ToString() + spCh;
+                    string outdata = "0" + spCh + chatText.Text.ToString() + spCh + spCh;
                     byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
                     outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
+                    encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
                     netstream.Write(outSt, 0, outdata.Length);
                     netstream.Flush();
                 }
@@ -134,6 +139,11 @@ namespace ChatClient_WPF
                 msg(indata);
             }
             chatText.Text = null;
+
+
+
+            //test binding
+            userList.Add("fuck ytou");
         }
 
         public void msg(string s)
@@ -148,7 +158,20 @@ namespace ChatClient_WPF
                 chatDisplay.Dispatcher.Invoke(DispatcherPriority.Normal, new Action<string>(msg),s);
             }
         }
+        public void updateList(string[] commands)
+        {
+            //MessageBox.Show(commands[1]);
+            onlineList = new List<string>(commands);
+            int len = int.Parse(onlineList[0]);
+            onlineList.RemoveAt(0);
+            onlineList.RemoveAt(len);
+            //userList.r
+            //onlineList.RemoveAt(onlineList.Count());
+            updateUserListFromSvr();
+            //userListViewBinding();
 
+            MessageBox.Show(userList[0]);
+        }
         
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
@@ -173,15 +196,34 @@ namespace ChatClient_WPF
 
 
 
-        ObservableCollection<String> userList;
-        ObservableCollection<String> friendList;
-        ObservableCollection<String> blackList;
+       
 
+
+        int count = 0;
         private void updateUserListFromSvr()
         {
+            MessageBox.Show("updateUserListFromSvr called");
+
             //test
             String[] strUL = { "abc", "def", "ghi", "jklm" };
-            userList = new ObservableCollection<String>(strUL);
+            userList.Add(strUL[count]);
+            count ++;
+
+
+            /*
+            foreach (String user in userList)
+            {
+                if (!onlineList.Contains(user))
+                    userList.Remove(user);
+            }
+
+            foreach (String user in onlineList)
+            {
+                if (!userList.Contains(user))
+                    userList.Add(user);
+            }*/
+
+           // userList = new ObservableCollection<String>(onlineList.ToArray());
         }
         private void updateFriendListFromSvr() { }
         private void updateBlackListFromSvr() { }
@@ -191,6 +233,7 @@ namespace ChatClient_WPF
         {
             ListView lv = userListBinding;
             lv.DataContext = userList;
+            //MessageBox.Show("finish userListViewBinding");
         }
 
 
