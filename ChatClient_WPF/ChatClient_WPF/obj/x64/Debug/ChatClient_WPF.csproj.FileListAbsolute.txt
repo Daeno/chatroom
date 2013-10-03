@@ -1,0 +1,39 @@
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe.config
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.baml
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.g.cs
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\App.g.cs
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF_MarkupCompile.cache
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.g.resources
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.Properties.Resources.resources
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.pdb
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.exe
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.pdb
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe.config
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.exe
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.pdb
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.pdb
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.baml
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.g.cs
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\App.g.cs
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF_MarkupCompile.cache
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.g.resources
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.Properties.Resources.resources
+C:\Users\steve1012\Desktop\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe.config
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.exe
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.pdb
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.exe
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\bin\x64\Debug\ChatClient_WPF.pdb
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csprojResolveAssemblyReference.cache
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.baml
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\MainWindow.g.cs
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\App.g.cs
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF_MarkupCompile.cache
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.g.resources
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.Properties.Resources.resources
+C:\Users\Daeno\Desktop\ChatRoom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache

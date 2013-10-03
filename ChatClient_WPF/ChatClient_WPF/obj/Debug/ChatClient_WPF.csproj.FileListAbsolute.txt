@@ -1,0 +1,9 @@
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\bin\Debug\ChatClient_WPF.exe.config
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\ChatClient_WPF.csprojResolveAssemblyReference.cache
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\MainWindow.baml
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\MainWindow.g.cs
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\App.g.cs
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\ChatClient_WPF_MarkupCompile.cache
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\ChatClient_WPF.g.resources
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\ChatClient_WPF.Properties.Resources.resources
+c:\users\daeno\documents\visual studio 2012\Projects\ChatClient_WPF\ChatClient_WPF\obj\Debug\ChatClient_WPF.csproj.GenerateResource.Cache

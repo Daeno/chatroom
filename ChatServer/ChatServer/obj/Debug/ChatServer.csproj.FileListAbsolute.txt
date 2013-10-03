@@ -1,0 +1,18 @@
+c:\users\daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\bin\Debug\ChatServer.exe.config
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\Daeno\documents\visual studio 2012\Projects\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\bin\Debug\ChatServer.exe.config
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\steve1012\Desktop\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\bin\Debug\ChatServer.exe.config
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\Daeno\Desktop\ChatRoom\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
