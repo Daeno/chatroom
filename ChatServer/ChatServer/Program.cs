@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using System.IO;
 using System.Threading;
 
 namespace ChatServer
@@ -43,7 +44,7 @@ namespace ChatServer
         public static List<string>[] BCGroupList = new List<string>[20];
         static void Main(string[] args)
         {
-            //byte[] test =System.Text.Encoding.ASCII.GetBytes("\x00\x02\x03");
+            //byte[] test =System.Text.Encoding.Unicode.GetBytes("\x00\x02\x03");
             //parseMsg(ref test);
             //encodeMsg(ref test,MsgType.S_REGISTER_RESULT);
             string hostname = Dns.GetHostName();
@@ -72,14 +73,14 @@ namespace ChatServer
                     MsgType tt = parseMsg(ref byteFrom);
                     if (tt == MsgType.C_ASK_REGISTER)
                     {
-                        clientName = System.Text.Encoding.ASCII.GetString(byteFrom);
+                        clientName = System.Text.Encoding.Unicode.GetString(byteFrom);
                         clientName = clientName.Substring(0, clientName.IndexOf(spCh));
 
                         clientList.Add(clientName, clientSocket);
                         BCGroupList[0].Add(clientName);
 
                         broadcastChat(clientName + " has joined the chatroom.", clientName,0, false);
-                        Thread.Sleep(550);
+                        //Thread.Sleep(550);
                         broadcastList(0);
                         Console.WriteLine(clientName + " has joined.");
                         handleClient cc = new handleClient();
@@ -116,7 +117,7 @@ namespace ChatServer
                 data += (string)(spCh + item);
             }
             data += (spCh);
-            byte[] outdata = System.Text.Encoding.ASCII.GetBytes(data);
+            byte[] outdata = System.Text.Encoding.Unicode.GetBytes(data);
             encodeMsg(ref outdata, MsgType.S_ONLINE_LIST);
             broadcastGP(0, outdata,MsgType.S_ONLINE_LIST);
         }
@@ -127,11 +128,11 @@ namespace ChatServer
             byte[] sendingData = new byte[65536];
             if (showName)
                 {
-                    sendingData = System.Text.Encoding.ASCII.GetBytes((gpn.ToString() + spCh + ">> " + usrName + " says: " + msg + spCh).ToCharArray());
+                    sendingData = System.Text.Encoding.Unicode.GetBytes((gpn.ToString() + spCh + ">> " + usrName + " says: " + msg + spCh).ToCharArray());
                 }
                 else
                 {
-                    sendingData = System.Text.Encoding.ASCII.GetBytes((gpn.ToString() + spCh + ">> " + msg + spCh).ToCharArray());
+                    sendingData = System.Text.Encoding.Unicode.GetBytes((gpn.ToString() + spCh + ">> " + msg + spCh).ToCharArray());
                 }
             encodeMsg(ref sendingData, MsgType.S_MSG_FROM_BCGROUP);
             broadcastGP(0, sendingData , MsgType.S_MSG_FROM_BCGROUP);
@@ -143,9 +144,12 @@ namespace ChatServer
             {
                 TcpClient sendingClient = (TcpClient)clientList[item];
                 NetworkStream sendingStream = sendingClient.GetStream();
-                
-                sendingStream.Write(data, 0, data.Length);
-                sendingStream.Flush();
+                BinaryWriter bw = new BinaryWriter(sendingStream);
+
+                bw.Write(data.Length);
+                bw.Write(data);
+                //sendingStream.Write(data, 0, data.Length);
+                //sendingStream.Flush();
 
                 Console.WriteLine("Broadcasting " + ty.ToString() + " to Group " + gpn.ToString() + " user:" + item);
                 //sendingStream.Close(0);

@@ -17,6 +17,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace ChatClient_WPF
 {
@@ -102,7 +103,7 @@ namespace ChatClient_WPF
                 userName.IsReadOnly = true;
                 clientSocket.Connect("140.112.18.208", 8888);
                 netstream = clientSocket.GetStream();
-                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+ spCh).ToCharArray());
+                byte[] outdata = System.Text.Encoding.Unicode.GetBytes((userName.Text+ spCh).ToCharArray());
                 encodeMsg(ref outdata, MsgType.C_ASK_REGISTER);
                 netstream.Write(outdata, 0, outdata.Length);
                 netstream.Flush();
@@ -123,10 +124,14 @@ namespace ChatClient_WPF
                 {
                     string outdata = "0" + spCh + chatText.Text.ToString() + spCh + spCh;
                     byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
-                    outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
+                    outSt = System.Text.Encoding.Unicode.GetBytes(outdata.ToCharArray());
                     encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
-                    netstream.Write(outSt, 0, outdata.Length);
-                    netstream.Flush();
+
+                    BinaryWriter bw = new BinaryWriter(netstream);
+                    //netstream.Write(outSt, 0, outdata.Length);
+                    //netstream.Flush();
+                    bw.Write(outSt.Length);
+                    bw.Write(outSt);
                 }
                 catch
                 {
@@ -141,16 +146,6 @@ namespace ChatClient_WPF
             chatText.Text = null;
 
 
-
-            //test binding
-            userList.Add("fuck ytou");
-
-            TextBlock item = new TextBlock();
-            item.Text = "badfs";
-
-        
-           // userListBox.Items.Add(item);
-            
         }
 
         public void msg(string s)
@@ -206,7 +201,6 @@ namespace ChatClient_WPF
        
 
 
-        int counttt = 0;
         private void updateUserListFromSvr()
         {
             

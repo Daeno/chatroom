@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Net.Sockets;
+using System.IO;
 
 namespace ChatServer
 {
@@ -33,8 +34,11 @@ namespace ChatServer
                     if (clientSocket.Connected)
                     {
                         NetworkStream dataStream = this.clientSocket.GetStream();
-                        byte[] data = new byte[clientSocket.ReceiveBufferSize];
-                        dataStream.Read(data, 0, clientSocket.ReceiveBufferSize);
+                        BinaryReader br = new BinaryReader(dataStream);
+                        //byte[] data = new byte[clientSocket.ReceiveBufferSize];
+                        //dataStream.Read(data, 0, clientSocket.ReceiveBufferSize);
+                        int len = br.ReadInt32();
+                        byte[] data = br.ReadBytes(len);
 
                         switch(Program.parseMsg(ref data))
                         {

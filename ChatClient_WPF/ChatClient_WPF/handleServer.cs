@@ -7,6 +7,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
+using System.IO;
 
 
 namespace ChatClient_WPF
@@ -40,12 +41,16 @@ namespace ChatClient_WPF
                     {
                         
                         netstream = clientSocket.GetStream();
-                        byte[] inData = new byte[clientSocket.ReceiveBufferSize];
-                        netstream.Read(inData, 0, clientSocket.ReceiveBufferSize);
+                        //byte[] inData = new byte[clientSocket.ReceiveBufferSize];
+                        BinaryReader br = new BinaryReader(netstream);
+                        int len = br.ReadInt32();
+                        byte[] inData = br.ReadBytes(len);
+                        
+                        //netstream.Read(inData, 0, clientSocket.ReceiveBufferSize);
                         string message;
 
                         MsgType ty = ChatClient_WPF.MainWindow.parseMsg(ref inData);
-                        message = System.Text.Encoding.ASCII.GetString(inData);
+                        message = System.Text.Encoding.Unicode.GetString(inData);
                         string[] commands = message.Split(spCh);
                         switch(ty)
                         {
