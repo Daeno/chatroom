@@ -59,16 +59,21 @@ namespace ChatClient_WPF
         ObservableCollection<String> friendList;
         ObservableCollection<String> blackList;
 
+        ObservableCollection<String> selectedList;
         
         public MainWindow()
         {
+
             InitializeComponent();
 
             updateUserListFromSvr();
             userListViewBinding();
         }
+
+
         public bool connectToServer()
         { return clientSocket.Connected; }
+
 
         public static MsgType parseMsg(ref byte[] indata)
         {
@@ -100,7 +105,7 @@ namespace ChatClient_WPF
             try
             {
                 userName.IsReadOnly = true;
-                clientSocket.Connect("140.112.18.208", 8888);
+                clientSocket.Connect("127.0.0.1", 8888);
                 netstream = clientSocket.GetStream();
                 byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+ spCh).ToCharArray());
                 encodeMsg(ref outdata, MsgType.C_ASK_REGISTER);
@@ -139,18 +144,6 @@ namespace ChatClient_WPF
                 msg(indata);
             }
             chatText.Text = null;
-
-
-
-            //test binding
-            userList.Add("fuck ytou");
-
-            TextBlock item = new TextBlock();
-            item.Text = "badfs";
-
-        
-           // userListBox.Items.Add(item);
-            
         }
 
         public void msg(string s)
@@ -201,12 +194,6 @@ namespace ChatClient_WPF
 
 
 
-
-
-       
-
-
-        int counttt = 0;
         private void updateUserListFromSvr()
         {
             
@@ -222,15 +209,8 @@ namespace ChatClient_WPF
             {
                 userListBinding.Dispatcher.Invoke(new Action(updateUserListFromSvr));
             }
-
-            //userListBox.
-
-
-
-           
-
-           // userList = new ObservableCollection<String>(onlineList.ToArray());
         }
+
         private void updateFriendListFromSvr() { }
         private void updateBlackListFromSvr() { }
 
@@ -254,6 +234,14 @@ namespace ChatClient_WPF
         //Binding needed for userListView
         private void userListBinding_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            IList selectedItems = userListBinding.SelectedItems;
+            selectedList = new ObservableCollection<String>();
+
+            foreach (String item in selectedItems) {
+                selectedList.Add(item.ToString());
+            }
+
+            MessageBox.Show(selectedList.Count().ToString());
         }
 
 

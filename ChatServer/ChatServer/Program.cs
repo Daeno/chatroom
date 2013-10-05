@@ -47,7 +47,7 @@ namespace ChatServer
             //parseMsg(ref test);
             //encodeMsg(ref test,MsgType.S_REGISTER_RESULT);
             string hostname = Dns.GetHostName();
-            IPAddress serverIP = Dns.Resolve(hostname).AddressList[0];
+            IPAddress serverIP = IPAddress.Parse("127.0.0.1");// Dns.Resolve(hostname).AddressList[0];
             //Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //IPEndPoint serverEP = new IPEndPoint(serverIP, 8888);
             //serverSocket.Bind(serverEP);

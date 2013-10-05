@@ -16,8 +16,8 @@ namespace ChatClient_WPF
         TcpClient clientSocket;
         NetworkStream netstream;
         MainWindow window;
-        string ctName;
-        char spCh;
+        string ctName;  //帳號
+        char spCh;   //切割字符
         public void start(TcpClient tc,string uln, char sp, MainWindow ww)
         {
             clientSocket = tc;
@@ -56,6 +56,8 @@ namespace ChatClient_WPF
                             case MsgType.S_ONLINE_LIST:
                                 window.updateList(commands);
                             break;
+
+
                         }
                     }
                     else
