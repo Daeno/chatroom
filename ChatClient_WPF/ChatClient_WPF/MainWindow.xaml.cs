@@ -18,6 +18,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.IO;
 
 namespace ChatClient_WPF
 {
@@ -52,7 +53,7 @@ namespace ChatClient_WPF
     public partial class MainWindow : Window
     {
         public static char    spCh = '\x01';
-        private TcpClient     clientSocket = new TcpClient();
+        private TcpClient     clientSocket;
         private NetworkStream netstream    = default(NetworkStream);
         //string indata = null;
         private bool          fir = true;
@@ -77,16 +78,18 @@ namespace ChatClient_WPF
             userListViewBinding();
         }
 
-        public MainWindow(String account, IPAddress svrIP, int svrPort) 
+        public MainWindow(String account, IPAddress svrIP, int svrPort, TcpClient cSocket) 
         {
             InitializeComponent();
 
             this.account = account;
             this.svrIP = svrIP;
             this.svrPort = svrPort;
+            this.clientSocket = cSocket;
 
             updateUserListFromSvr();
             userListViewBinding();
+
         }
 
 
@@ -94,7 +97,9 @@ namespace ChatClient_WPF
 
 
         public bool connectToServer()
-        { return clientSocket.Connected; }
+        { 
+            return clientSocket.Connected; 
+        }
 
 
         public static MsgType parseMsg(ref byte[] indata)
@@ -126,6 +131,7 @@ namespace ChatClient_WPF
 
         private void buttonConnect_Click(object sender, RoutedEventArgs e)
         {
+            /*
             try
             {
                 userName.IsReadOnly = true;
@@ -133,8 +139,10 @@ namespace ChatClient_WPF
                 netstream = clientSocket.GetStream();
                 byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+ spCh).ToCharArray());
                 encodeMsg(ref outdata, MsgType.C_ASK_REGISTER);
-                netstream.Write(outdata, 0, outdata.Length);
-                netstream.Flush();
+
+                sendBySocket(outdata);
+                //netstream.Write(outdata, 0, outdata.Length);
+                //netstream.Flush();
                 handleServer hs = new handleServer();
                 hs.start(clientSocket, userName.Text.ToString(), spCh,this);
             }
@@ -142,6 +150,7 @@ namespace ChatClient_WPF
             {
                 MessageBox.Show("Something's Wrong!");
             }
+             */
         }
 
         private void buttonSend_Click(object sender, RoutedEventArgs e)
@@ -150,16 +159,20 @@ namespace ChatClient_WPF
             {
                 try
                 {
-                    string outdata = "0" + spCh + chatText.Text.ToString() + spCh + spCh;
+                    int groupNum = 0;
+
+                    string outdata = groupNum + spCh + chatText.Text.ToString() + spCh + spCh;
                     byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
                     outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
                     encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
-                    netstream.Write(outSt, 0, outdata.Length);
-                    netstream.Flush();
+
+                    sendBySocket(outSt);
+                    //netstream.Write(outSt, 0, outdata.Length);
+                    //netstream.Flush();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Stupid Daeno!");
+                    MessageBox.Show(ex.ToString());
                 }
             }
             else
@@ -169,6 +182,28 @@ namespace ChatClient_WPF
             }
             chatText.Text = null;
         }
+
+        
+
+        private void sendBySocket(byte[] data)
+        {
+            netstream = clientSocket.GetStream();
+            BinaryWriter bw = new BinaryWriter(netstream);
+            bw.Write(data.Length);
+            bw.Write(data);
+        }
+
+
+        private byte[] receiveBySocket()
+        {
+            BinaryReader br = new BinaryReader(netstream);
+            int len = br.ReadInt32();
+            byte[] data = br.ReadBytes(len);
+            return data;
+        }
+
+
+
 
         public void msg(string s)
         {
@@ -241,14 +276,11 @@ namespace ChatClient_WPF
 
         private void userListViewBinding()
         {
-            if (userListBinding.CheckAccess())
-            {
-
+            if (userListBinding.CheckAccess()){
                ListView lv = userListBinding;
                lv.DataContext = userList;
             }
-            else
-            {
+            else {
                 userListBinding.Dispatcher.Invoke(new Action(userListViewBinding));
             }
         }
@@ -265,13 +297,41 @@ namespace ChatClient_WPF
                 selectedList.Add(item.ToString());
             }
 
-            MessageBox.Show(selectedList.Count().ToString());
+            changeAddButtonLook(selectedList.Count);
         }
+
+
+        private void changeAddButtonLook(int selectedNum)
+        {
+            if (selectedNum == 0) {
+                userListBinding.Height = 291;
+                buttonNewGroup.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+            else {
+                userListBinding.Height = 260;
+                
+                //string num = selectedNum
+
+            }
+
+
+        }
+
+
+
+
+
 
 
         private void HandleUserDoubleClick(object sender, MouseButtonEventArgs e)
         {
             //MessageBox.Show(userListBinding.SelectedItem.ToString());
+        }
+
+        private void buttonNewGroup_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
 

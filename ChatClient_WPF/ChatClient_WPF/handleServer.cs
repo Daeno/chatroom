@@ -11,7 +11,7 @@ using System.Windows.Controls;
 
 namespace ChatClient_WPF
 {
-    class handleServer
+    public class handleServer
     {
         TcpClient clientSocket;
         NetworkStream netstream;
@@ -30,8 +30,9 @@ namespace ChatClient_WPF
 
         private void getMessage()
         {
-            
-            while (true)
+            bool close = false;
+
+            while (!close)
             {
                 try
                 {
@@ -51,6 +52,7 @@ namespace ChatClient_WPF
                         {
 
                             case MsgType.S_MSG_FROM_BCGROUP:
+                                MessageBox.Show("get msg from server");
                                 int bcgp = int.Parse(commands[0]);
                                 ((MainWindow)window).msg(commands[1]);
                                 break;
@@ -60,19 +62,25 @@ namespace ChatClient_WPF
                                 break;
 
                             case MsgType.S_REGISTER_SUCC:
-                                ((LoginWindow)window).registerSucc();
+                                close = true;
+                                ((LoginWindow)window).Dispatcher.Invoke(new Action(((LoginWindow)window).registerSucc));
                                 break;
 
                             case MsgType.S_REGISTER_FAILED:
+                                close = true;
                                 string cause = commands[0];
-                                ((LoginWindow)window).registerFalied(cause);
+                                ((LoginWindow)window).Dispatcher.Invoke(new Action(() => ((LoginWindow)window).registerFailed(cause)));
                                 break;
 
                             case MsgType.S_LOGIN_SUCC:
-                                ((LoginWindow)window).loginSucc();
+                                MessageBox.Show("login succ  by serverhandler");
+                                close = true;
+                                ((LoginWindow)window).Dispatcher.Invoke(new Action(((LoginWindow)window).loginSucc));
                                 break;
                             case MsgType.S_LOGIN_FAILED:
-                                ((LoginWindow)window).loginFailed(commands[0]);
+                                close = true;
+                                cause = commands[0];
+                                ((LoginWindow)window).Dispatcher.Invoke(new Action(() => ((LoginWindow)window).loginFailed(cause)));
                                 break;
 
 
@@ -89,6 +97,12 @@ namespace ChatClient_WPF
                     return;
                 }
             }
+        }
+
+
+        public void changeWindow(Window newWindow)
+        {
+            window = newWindow;
         }
     }
 }

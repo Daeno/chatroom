@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -32,6 +33,7 @@ namespace ChatClient_WPF
 
         private IPAddress svrIP;
         private int       svrPort;
+        private handleServer handleSvr;
 
         private String account;
 
@@ -73,8 +75,11 @@ namespace ChatClient_WPF
 
             try {
                 showResult(registering_str);
-                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh).ToCharArray());
-                sendBySocket(outdata, MsgType.C_ASK_REGISTER);
+                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh + spCh).ToCharArray());
+                sendData(outdata, MsgType.C_ASK_REGISTER);
+
+                handleSvr = new handleServer();
+                handleSvr.start(clientSocket, account, spCh, this);
             }
             catch (Exception ex) {
                 MessageBox.Show(ex.ToString());
@@ -91,54 +96,73 @@ namespace ChatClient_WPF
 
             try {
                 showResult(loginning_str);
-                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh).ToCharArray());
-                sendBySocket(outdata, MsgType.C_ASK_LOGIN);
+                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh + spCh).ToCharArray());
+                sendData(outdata, MsgType.C_ASK_LOGIN);
+
+                handleSvr = new handleServer();
+                handleSvr.start(clientSocket, account, spCh, this);
             }
             catch (Exception ex) {
                 MessageBox.Show(ex.ToString());
             }
+
+
+
         }
 
 
 
-        private void sendBySocket(byte[] outdata, MsgType msgType)
+        private void sendData(byte[] outdata, MsgType msgType)
         {
             try {
-                clientSocket.Connect(svrIP, svrPort);
+                if (!clientSocket.Connected) {
+                    clientSocket = new TcpClient();
+                    clientSocket.Connect(svrIP, svrPort);
+                }
                 netstream = clientSocket.GetStream();
                 MainWindow.encodeMsg(ref outdata, msgType);
-                netstream.Write(outdata, 0, outdata.Length);
-                netstream.Flush();
-                handleServer hs = new handleServer();
-                hs.start(clientSocket, account, spCh, this);
+
+                sendBySocket(outdata);
             }
             catch (Exception Ex) {
                 MessageBox.Show(Ex.ToString());
             }
         }
 
+        private void sendBySocket(byte[] data)
+        {
+            BinaryWriter bw = new BinaryWriter(netstream);
+            bw.Write(data.Length);
+            bw.Write(data);
+        }
+
 
 
         public void registerSucc()
         {
+            clientSocket.Close();
             showResult(register_succ_str);
         }
 
-        public void registerFalied(String cause)
+        public void registerFailed(String cause)
         {
+            clientSocket.Close();
             showResult(register_failed_str + '\n' + cause);
         }
 
         public void loginSucc()
         {
             showResult(login_succ_str);
-            MainWindow mainWindow = new MainWindow(account, svrIP, svrPort);
+            MainWindow mainWindow = new MainWindow(account, svrIP, svrPort, clientSocket);
+            handleSvr.changeWindow(mainWindow);
+
             mainWindow.Show();
             Close();
         }
 
         public void loginFailed(String cause)
         {
+            clientSocket.Close();
             showResult(login_failed_str + '\n' + cause);
         }
 
