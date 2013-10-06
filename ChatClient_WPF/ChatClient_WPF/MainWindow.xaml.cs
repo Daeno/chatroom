@@ -17,6 +17,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Net;
 
 namespace ChatClient_WPF
 {
@@ -24,13 +25,13 @@ namespace ChatClient_WPF
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public static  enum MsgType : byte
+    public enum MsgType : byte
     {
 
         //Message Types from Client to Server, 0~127
         C_ASK_REGISTER = 0,
         C_ASK_USERLIST,
-        C_ASK_ONLINE,
+        C_ASK_LOGIN,
         C_ADD_BCGROUP,
         C_MSG_TO_BCGROUP,
         C_ADD_FRIEND,
@@ -38,8 +39,8 @@ namespace ChatClient_WPF
 
 
         //Message Types from Server to Client , 128~255
-        S_REGISTER_SUCC = 128,
-        S_REGISTER_FAILED,
+        S_REGISTER_SUCC = 128,      //  type\\\\
+        S_REGISTER_FAILED,          //  type\\string cause\\\\
         S_LOGIN_FAILED,
         S_LOGIN_SUCC,
         S_ADD_TO_BCGROUP,
@@ -50,12 +51,17 @@ namespace ChatClient_WPF
     };
     public partial class MainWindow : Window
     {
-        public static const char spCh = '\x01';
-        TcpClient clientSocket = new TcpClient();
-        NetworkStream netstream = default(NetworkStream);
+        public static char    spCh = '\x01';
+        private TcpClient     clientSocket = new TcpClient();
+        private NetworkStream netstream    = default(NetworkStream);
         //string indata = null;
-        bool fir = true;
-        List<string> onlineList = new List<string>();
+        private bool          fir = true;
+        private List<string>  onlineList = new List<string>();
+
+        private string      account;
+        private IPAddress   svrIP;
+        private int         svrPort;
+
         ObservableCollection<String> userList = new ObservableCollection<string>();
         ObservableCollection<String> friendList;
         ObservableCollection<String> blackList;
@@ -70,6 +76,21 @@ namespace ChatClient_WPF
             updateUserListFromSvr();
             userListViewBinding();
         }
+
+        public MainWindow(String account, IPAddress svrIP, int svrPort) 
+        {
+            InitializeComponent();
+
+            this.account = account;
+            this.svrIP = svrIP;
+            this.svrPort = svrPort;
+
+            updateUserListFromSvr();
+            userListViewBinding();
+        }
+
+
+
 
 
         public bool connectToServer()

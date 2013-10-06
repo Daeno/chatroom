@@ -49,14 +49,32 @@ namespace ChatClient_WPF
                         string[] commands = message.Split(spCh);
                         switch(ty)
                         {
-                            case MsgType.S_MSG
+
                             case MsgType.S_MSG_FROM_BCGROUP:
                                 int bcgp = int.Parse(commands[0]);
                                 ((MainWindow)window).msg(commands[1]);
-                            break;
+                                break;
+
                             case MsgType.S_ONLINE_LIST:
                                 ((MainWindow)window).updateList(commands);
-                            break;
+                                break;
+
+                            case MsgType.S_REGISTER_SUCC:
+                                ((LoginWindow)window).registerSucc();
+                                break;
+
+                            case MsgType.S_REGISTER_FAILED:
+                                string cause = commands[0];
+                                ((LoginWindow)window).registerFalied(cause);
+                                break;
+
+                            case MsgType.S_LOGIN_SUCC:
+                                ((LoginWindow)window).loginSucc();
+                                break;
+                            case MsgType.S_LOGIN_FAILED:
+                                ((LoginWindow)window).loginFailed(commands[0]);
+                                break;
+
 
                         }
                     }
