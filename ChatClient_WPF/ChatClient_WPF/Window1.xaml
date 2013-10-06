@@ -3,20 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="不是啊" Height="394.862" Width="273.913" AllowsTransparency="True" WindowStyle="None" MouseDown="Window_MouseDown" Background="#FFF7E6E6">
     <Grid Margin="0,0,-8,-2" Opacity="0.8" Background="#FFFFF2F2">
+        <Grid.RowDefinitions>
+
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>
-        <ComboBox Name="cboxIP" HorizontalAlignment="Left" Height="26" Margin="40,76,0,0" VerticalAlignment="Top" Width="202" ItemsSource="{Binding}" SelectionChanged="cboxIP_SelectionChanged" />
+        <ComboBox Name="cboxIP" HorizontalAlignment="Left" Height="26" Margin="40,76,0,0" VerticalAlignment="Top" Width="202" ItemsSource="{Binding}" SelectionChanged="cboxIP_SelectionChanged"  >
+        </ComboBox>
         <ComboBox Name="cboxPort" HorizontalAlignment="Left" Height="24" Margin="40,132,0,0" VerticalAlignment="Top" Width="202"  ItemsSource="{Binding}" SelectionChanged="cboxPort_SelectionChanged" />
-        <TextBox x:Name="textBoxAccount" Height="26" Margin="94,200,0,0" TextWrapping="Wrap" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" TextChanged="textBoxAccount_TextChanged"/>
+        <TextBox x:Name="textBoxAccount" Height="26" Margin="94,200,0,0" TextWrapping="Wrap" Width="148" HorizontalAlignment="Left" VerticalAlignment="Top" TextChanged="textBoxAccount_TextChanged" FontSize="15"/>
+        <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="94,236,0,0" VerticalAlignment="Top" Width="148" Height="26"/>
         <TextBlock Height="26" Margin="40,200,0,0" TextWrapping="Wrap" Width="54" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top"><Run Language="zh-tw" Text="帳號："/></TextBlock>
         <TextBlock Height="26" Margin="40,236,0,0" TextWrapping="Wrap" Width="54" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top"><Run Language="zh-tw" Text="密碼："/></TextBlock>
-        <Button x:Name="buttonRegister" Content="註冊" HorizontalAlignment="Left" Height="30" Margin="40,308,0,0" VerticalAlignment="Top" Width="94" FontSize="16" Click="buttonRegister_Click"/>
-        <Button x:Name="buttonConnect" Content="登入" HorizontalAlignment="Left" Height="30" Margin="148,308,0,0" VerticalAlignment="Top" Width="94" FontSize="16" Click="buttonConnect_Click"/>
+        <Button x:Name="buttonRegister" Content="註冊" HorizontalAlignment="Left" Height="30" Margin="40,308,0,0" VerticalAlignment="Top" Width="94" FontSize="16" Click="buttonRegister_Click" Background="#FFFFF9F9"/>
+        <Button x:Name="buttonConnect" Content="登入" HorizontalAlignment="Left" Height="30" Margin="148,308,0,0" VerticalAlignment="Top" Width="94" FontSize="16" Click="buttonConnect_Click" Background="#FFFFF9F9"/>
         <TextBlock HorizontalAlignment="Left" Height="26" Margin="40,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" FontSize="16"><Run Language="zh-tw" Text="伺服器IP"/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Height="28" Margin="40,106,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" FontSize="16"><Run Language="zh-tw" Text="伺服器Port "/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Height="26" Margin="110,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="14" FontSize="16" RenderTransformOrigin="2.076,2.643"><Run Language="zh-tw" Text="："/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Height="28" Margin="114,106,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="16" FontSize="16" RenderTransformOrigin="2.076,2.643"><Run Language="zh-tw" Text="："/></TextBlock>
-        <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="94,236,0,0" VerticalAlignment="Top" Width="148" Height="26"/>
         <Button x:Name="buttonExit" Content="X" VerticalAlignment="Top" Margin="241.667,18,0,0" HorizontalAlignment="Left" Width="21" OpacityMask="#FFF58282" Foreground="#FFFB7C7C" Background="#FFFBFBFB" TextOptions.TextFormattingMode="Display" FontStretch="ExtraExpanded" UseLayoutRounding="False" BorderBrush="#FFFF8D8D" Click="Button_Click"/>
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Height="52" Width="148" Margin="53,0,0,0" FontSize="20"><Run Language="zh-tw" Text="我很潮"/><LineBreak/><Run Language="zh-tw" Text="    但我很沒有用"/></TextBlock>
 

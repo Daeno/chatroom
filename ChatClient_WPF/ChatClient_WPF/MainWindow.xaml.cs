@@ -24,7 +24,7 @@ namespace ChatClient_WPF
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public enum MsgType : byte
+    public static  enum MsgType : byte
     {
 
         //Message Types from Client to Server, 0~127
@@ -38,7 +38,8 @@ namespace ChatClient_WPF
 
 
         //Message Types from Server to Client , 128~255
-        S_REGISTER_RESULT = 128,
+        S_REGISTER_SUCC = 128,
+        S_REGISTER_FAILED,
         S_LOGIN_FAILED,
         S_LOGIN_SUCC,
         S_ADD_TO_BCGROUP,
@@ -49,7 +50,7 @@ namespace ChatClient_WPF
     };
     public partial class MainWindow : Window
     {
-        char spCh = '\x01';
+        public static const char spCh = '\x01';
         TcpClient clientSocket = new TcpClient();
         NetworkStream netstream = default(NetworkStream);
         //string indata = null;
@@ -86,6 +87,8 @@ namespace ChatClient_WPF
             indata = temp;
             return type;
         }
+
+
         public static void encodeMsg(ref byte[] indata, MsgType type)
         {
             byte[] output = new byte[indata.Length + 1];

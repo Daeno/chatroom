@@ -15,10 +15,10 @@ namespace ChatClient_WPF
     {
         TcpClient clientSocket;
         NetworkStream netstream;
-        MainWindow window;
+        Window window;
         string ctName;  //帳號
         char spCh;   //切割字符
-        public void start(TcpClient tc,string uln, char sp, MainWindow ww)
+        public void start(TcpClient tc,string uln, char sp, Window ww)
         {
             clientSocket = tc;
             ctName = uln;
@@ -49,14 +49,14 @@ namespace ChatClient_WPF
                         string[] commands = message.Split(spCh);
                         switch(ty)
                         {
+                            case MsgType.S_MSG
                             case MsgType.S_MSG_FROM_BCGROUP:
                                 int bcgp = int.Parse(commands[0]);
-                                window.msg(commands[1]);
+                                ((MainWindow)window).msg(commands[1]);
                             break;
                             case MsgType.S_ONLINE_LIST:
-                                window.updateList(commands);
+                                ((MainWindow)window).updateList(commands);
                             break;
-
 
                         }
                     }

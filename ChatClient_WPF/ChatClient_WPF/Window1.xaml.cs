@@ -31,12 +31,12 @@ namespace ChatClient_WPF
 
 
         private IPAddress svrIP;
-        private String svrPort;
+        private int       svrPort;
 
         private String account;
 
         /*Socket*/
-        char spCh = '\x01';
+        public static const char spCh = MainWindow.spCh;
         TcpClient clientSocket = new TcpClient();
         NetworkStream netstream = default(NetworkStream);
 
@@ -74,8 +74,39 @@ namespace ChatClient_WPF
         }
         */
 
+        private void buttonRegister_Click(object sender, RoutedEventArgs e)
+        {
+            try {
+                textBoxAccount.IsReadOnly = true;
+                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh).ToCharArray());
+                sendBySocket(outdata, MsgType.C_ASK_REGISTER);
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
         private void buttonConnect_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+
+
+        private void sendBySocket(byte[] outdata, MsgType msgType)
+        {
+            try {
+                clientSocket.Connect(svrIP, svrPort);
+                netstream = clientSocket.GetStream();
+                MainWindow.encodeMsg(ref outdata, msgType);
+                netstream.Write(outdata, 0, outdata.Length);
+                netstream.Flush();
+                handleServer hs = new handleServer();
+                hs.start(clientSocket, account, spCh, this);
+            }
+            catch (Exception Ex) {
+                MessageBox.Show(Ex.ToString());
+            }
         }
 
 
@@ -128,7 +159,7 @@ namespace ChatClient_WPF
 
         private void cboxPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            svrPort = portChoices[cboxPort.SelectedIndex];
+            svrPort = Int32.Parse(portChoices[cboxPort.SelectedIndex]);
         }
 
         private void textBoxAccount_TextChanged(object sender, TextChangedEventArgs e)
@@ -136,10 +167,7 @@ namespace ChatClient_WPF
             account = textBoxAccount.Text;
         }
 
-        private void buttonRegister_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
 
 
 
