@@ -14,10 +14,10 @@ namespace ChatServer
         string clName;
         char spCh;
 
-        public void startClient(TcpClient tl, string name, char cc)
+        public void startClient(TcpClient tl, string name, char spCh)
         {
             this.clientSocket = tl;
-            spCh = cc;
+            this.spCh = spCh;
             this.clName = name;
 
             Thread ctThread = new Thread(clientRoutine);

@@ -38,25 +38,42 @@ namespace ChatServer
 
     class Program
     {
-        const char spCh = '\x01';
+        //改這個值，true->127.0.0.1 ; false->"140.112.18.XXX"
+        private static readonly bool isLocalhost = true;
+
+        private static readonly string localhostIP_str = "127.0.0.1";
+        private static readonly int svrPort = 8888;
+
+        private static IPAddress svrIP;
+        private static IPEndPoint svrEndPoint;
+        private static IPHostEntry svrHostEntry;
+ 
+
+        public const char spCh = '\x01';
         public static Hashtable clientList = new Hashtable();
         public static List<string>[] BCGroupList = new List<string>[20];
+
+        public  
+
         static void Main(string[] args)
         {
             //byte[] test =System.Text.Encoding.ASCII.GetBytes("\x00\x02\x03");
             //parseMsg(ref test);
             //encodeMsg(ref test,MsgType.S_REGISTER_RESULT);
-            string hostname = Dns.GetHostName();
-            IPAddress serverIP = IPAddress.Parse("127.0.0.1");// Dns.Resolve(hostname).AddressList[0];
+            
+            setupIPandEP(isLocalhost);
+
             //Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            //IPEndPoint serverEP = new IPEndPoint(serverIP, 8888);
             //serverSocket.Bind(serverEP);
-            TcpListener serverSocket = new TcpListener(8888);
+
+            TcpListener serverSocket = new TcpListener(svrIP, svrPort);
             TcpClient clientSocket = default(TcpClient);
             int counter = 0;
             //serverSocket.Listen(10);
+
             Console.WriteLine("Chat server started...");
             serverSocket.Start();
+
             for (int i = 0; i < 20; i++) BCGroupList[i] = new List<string>();
 
                 while (true)
@@ -69,8 +86,9 @@ namespace ChatServer
                     NetworkStream incomingStream = clientSocket.GetStream();
                     incomingStream.Read(byteFrom, 0, clientSocket.SendBufferSize);
                     
-                    MsgType tt = parseMsg(ref byteFrom);
-                    if (tt == MsgType.C_ASK_REGISTER)
+                    MsgType msgType = parseMsg(ref byteFrom);
+
+                    if (msgType == MsgType.C_ASK_REGISTER)
                     {
                         clientName = System.Text.Encoding.ASCII.GetString(byteFrom);
                         clientName = clientName.Substring(0, clientName.IndexOf(spCh));
@@ -79,7 +97,6 @@ namespace ChatServer
                         BCGroupList[0].Add(clientName);
 
                         broadcastChat(clientName + " has joined the chatroom.", clientName,0, false);
-                        Thread.Sleep(550);
                         broadcastList(0);
                         Console.WriteLine(clientName + " has joined.");
                         handleClient cc = new handleClient();
@@ -88,6 +105,33 @@ namespace ChatServer
                     
                 }
         }
+
+
+        private static void setupIPandEP(bool isLocalhost)
+        {
+            if (isLocalhost) {
+                svrIP = IPAddress.Parse(localhostIP_str);
+                svrEndPoint = new IPEndPoint(svrIP, svrPort);
+            }
+            else {
+                IPAddress[] ipList;
+
+                string hostname = Dns.GetHostName();
+                svrHostEntry = Dns.GetHostEntry(hostname);
+                ipList = svrHostEntry.AddressList;
+
+                foreach (IPAddress ip in ipList) {
+                    IPEndPoint ep = new IPEndPoint(ip, svrPort);
+
+                    if (ip.AddressFamily == AddressFamily.InterNetwork) {
+                        svrEndPoint = ep;
+                        svrIP = ip;
+                    }
+                }
+            }
+
+        }
+
         public static MsgType parseMsg(ref byte[] indata)
         {
             MsgType type;
@@ -99,6 +143,8 @@ namespace ChatServer
             indata = temp;
             return type;
         }
+
+
         public static void encodeMsg(ref byte[] indata, MsgType type)
         {
             byte[] output = new byte[indata.Length + 1];
@@ -107,20 +153,24 @@ namespace ChatServer
             indata = output;
         }
 
+        //send the usernames in gpn'th broadcast group to everyone in the group
         public static void broadcastList(int gpn)
         {
             int len = BCGroupList[gpn].Count();
             string data = len.ToString();
+
             foreach (string item in BCGroupList[0])
             {
                 data += (string)(spCh + item);
             }
             data += (spCh);
             byte[] outdata = System.Text.Encoding.ASCII.GetBytes(data);
+
             encodeMsg(ref outdata, MsgType.S_ONLINE_LIST);
-            broadcastGP(0, outdata,MsgType.S_ONLINE_LIST);
+            broadcastGP(gpn, outdata, MsgType.S_ONLINE_LIST);
         }
 
+        //user "usrName" send "msg"(chatting) to the gpn'th broadcast group
         public static void broadcastChat(string msg,string usrName, int gpn, bool showName)
         {
             
@@ -136,7 +186,10 @@ namespace ChatServer
             encodeMsg(ref sendingData, MsgType.S_MSG_FROM_BCGROUP);
             broadcastGP(0, sendingData , MsgType.S_MSG_FROM_BCGROUP);
         }
-        public static void broadcastGP(int gpn,byte[] data,MsgType ty)
+
+
+        //send data(data) of MsgType(msgType) to the chosen broadcast group (the gpn'th one)
+        public static void broadcastGP(int gpn,byte[] data,MsgType msgType)
         {
             
             foreach(string item in BCGroupList[gpn])
@@ -147,7 +200,7 @@ namespace ChatServer
                 sendingStream.Write(data, 0, data.Length);
                 sendingStream.Flush();
 
-                Console.WriteLine("Broadcasting " + ty.ToString() + " to Group " + gpn.ToString() + " user:" + item);
+                Console.WriteLine("Broadcasting " + msgType.ToString() + " to Group " + gpn.ToString() + " user:" + item);
                 //sendingStream.Close(0);
             }
         }
