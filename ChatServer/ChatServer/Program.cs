@@ -7,39 +7,41 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using System.IO;
 
 namespace ChatServer
 {
-    public enum MsgType :byte
-        { 
-        
+    public enum MsgType : byte
+    {
+
         //Message Types from Client to Server, 0~127
-            C_ASK_REGISTER = 0,
-            C_ASK_USERLIST,
-            C_ASK_ONLINE,
-            C_ADD_BCGROUP,
-            C_MSG_TO_BCGROUP,
-            C_ADD_FRIEND,
-            C_REMOVE_FRIEND,
+        C_ASK_REGISTER = 0,
+        C_ASK_USERLIST,
+        C_ASK_LOGIN,
+        C_ADD_BCGROUP,
+        C_MSG_TO_BCGROUP,
+        C_ADD_FRIEND,
+        C_REMOVE_FRIEND,
 
 
         //Message Types from Server to Client , 128~255
-            S_REGISTER_RESULT = 128,
-            S_LOGIN_FAILED,
-            S_LOGIN_SUCC,
-            S_ADD_TO_BCGROUP,
-            S_MSG_FROM_BCGROUP,
-            S_ONLINE_LIST,
-            S_ADD_FRIEND,
-            S_REMOVE_FRIEND
-        };
+        S_REGISTER_SUCC = 128,      //  type\\\\
+        S_REGISTER_FAILED,          //  type\\string cause\\\\
+        S_LOGIN_FAILED,
+        S_LOGIN_SUCC,
+        S_ADD_TO_BCGROUP,
+        S_MSG_FROM_BCGROUP,
+        S_ONLINE_LIST,
+        S_ADD_FRIEND,
+        S_REMOVE_FRIEND
+    };
 
         
 
     class Program
     {
         //改這個值，true->127.0.0.1 ; false->"140.112.18.XXX"
-        private static readonly bool isLocalhost = true;
+        private static readonly bool isLocalhost = false;
 
         private static readonly string localhostIP_str = "127.0.0.1";
         private static readonly int svrPort = 8888;
@@ -53,7 +55,7 @@ namespace ChatServer
         public static Hashtable clientList = new Hashtable();
         public static List<string>[] BCGroupList = new List<string>[20];
 
-        public  
+        private static UserList ul = new UserList();
 
         static void Main(string[] args)
         {
@@ -79,28 +81,72 @@ namespace ChatServer
                 while (true)
                 {   
                     counter += 1;
+                    
                     clientSocket = serverSocket.AcceptTcpClient();
-                    byte[] byteFrom = new byte[clientSocket.ReceiveBufferSize];
+                    Console.WriteLine("New Connection Established");
                     string clientName = null;
 
                     NetworkStream incomingStream = clientSocket.GetStream();
-                    incomingStream.Read(byteFrom, 0, clientSocket.SendBufferSize);
-                    
-                    MsgType msgType = parseMsg(ref byteFrom);
+                    //incomingStream.Read(byteFrom, 0, clientSocket.SendBufferSize);
+                    byte[] data = receiveBySocket(incomingStream);
 
-                    if (msgType == MsgType.C_ASK_REGISTER)
+                    MsgType msgType = parseMsg(ref data);
+
+                    switch (msgType)
                     {
-                        clientName = System.Text.Encoding.ASCII.GetString(byteFrom);
-                        clientName = clientName.Substring(0, clientName.IndexOf(spCh));
+                        case MsgType.C_ASK_REGISTER:
+                            {
+                                Console.WriteLine("Received Register Request.");
+                                string account, password;
+                                string[] commands = System.Text.Encoding.ASCII.GetString(data).Split(spCh);
+                                account = commands[0];
+                                password = commands[1];
+                                User client = new User(account, password, ul);
+                                if (ul.addUser(client))
+                                {
+                                    byte[] dd = new byte[30];
+                                    encodeMsg(ref dd, MsgType.S_REGISTER_SUCC);
+                                    sendBySocket(dd, incomingStream);
+                                }
+                                else
+                                {
+                                    byte[] dd = new byte[30];
+                                    encodeMsg(ref dd, MsgType.S_REGISTER_FAILED);
+                                    sendBySocket(dd, incomingStream);
+                                }
+                            }
+                            break;
+                        case MsgType.C_ASK_LOGIN:
+                            {
+                                Console.WriteLine("Received Login Request.");
+                                string account, password;
+                                string[] commands = System.Text.Encoding.ASCII.GetString(data).Split(spCh);
+                                account = commands[0];
+                                password = commands[1];
+                                if (ul.contains(new User(account, password, ul)))
+                                {
+                                    byte[] dd = new byte[30];
+                                    encodeMsg(ref dd, MsgType.S_LOGIN_SUCC);
+                                    sendBySocket(dd, incomingStream);
+                                    clientName = account;
 
-                        clientList.Add(clientName, clientSocket);
-                        BCGroupList[0].Add(clientName);
+                                    clientList.Add(clientName, clientSocket);
+                                    BCGroupList[0].Add(clientName);
 
-                        broadcastChat(clientName + " has joined the chatroom.", clientName,0, false);
-                        broadcastList(0);
-                        Console.WriteLine(clientName + " has joined.");
-                        handleClient cc = new handleClient();
-                        cc.startClient(clientSocket, clientName, spCh);
+                                    broadcastChat(clientName + " has joined the chatroom.", clientName, 0, false);
+                                    broadcastList(0);
+                                    Console.WriteLine(clientName + " has joined.");
+                                    handleClient cc = new handleClient();
+                                    cc.startClient(clientSocket, clientName, spCh);
+                                }
+                                else
+                                {
+                                    byte[] dd = new byte[33];
+                                    encodeMsg(ref dd, MsgType.S_LOGIN_FAILED);
+                                    sendBySocket(dd, incomingStream);
+                                }
+                            }
+                            break;
                     }
                     
                 }
@@ -152,6 +198,22 @@ namespace ChatServer
             Array.Copy(indata, 0, output, 1, indata.Length);
             indata = output;
         }
+
+        private static void sendBySocket(byte[] data, NetworkStream netstream)
+        {
+            BinaryWriter bw = new BinaryWriter(netstream);
+            bw.Write(data.Length);
+            bw.Write(data);
+        }
+
+        private static byte[] receiveBySocket(NetworkStream netstream)
+        {
+            BinaryReader br = new BinaryReader(netstream);
+            int len = br.ReadInt32();
+            byte[] data = br.ReadBytes(len);
+            return data;
+        }
+
 
         //send the usernames in gpn'th broadcast group to everyone in the group
         public static void broadcastList(int gpn)

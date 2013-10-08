@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication2
+namespace ChatServer
 {
     class User
     {
@@ -15,7 +15,7 @@ namespace ConsoleApplication2
         //string array
         ArrayList friendList;
         ArrayList blackList;
-
+        UserList ul;
         bool isOnline;
 
 
@@ -28,20 +28,22 @@ namespace ConsoleApplication2
             setBlackList(null);
         }
 
-        public User(String acct, String pw)
+        public User(String acct, String pw, UserList u)
         {   
             account  = acct;
             password = pw;
+            ul = u;
             isOnline = false;
 
             setFriendsList(null);
             setBlackList(null);
         }
 
-        public User(String acct, String pw, String[] friendsArr, String[] blackListArr)
+        public User(String acct, String pw, UserList u, String[] friendsArr, String[] blackListArr)
         {
             account = acct;
             password = pw;
+            ul = u;
             isOnline = false;
 
             setFriendsList(friendsArr);
@@ -147,7 +149,7 @@ namespace ConsoleApplication2
             ArrayList onLineFriendList = new ArrayList();
 
             foreach (String acct in friendList) {
-                User friend = UserList.getUserByAcct(acct);
+                User friend = ul.getUserByAcct(acct);
                 
                 if (friend.isOnline) {
                     onLineFriendList.Add(acct);

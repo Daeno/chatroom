@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication2
+namespace ChatServer
 {
     class UserList
     {
-        private static ArrayList userArrayList;
+        private ArrayList userArrayList;
 
 
         public UserList()
@@ -34,7 +34,7 @@ namespace ConsoleApplication2
 
 
 
-        public static ArrayList UserArrayList
+        public ArrayList UserArrayList
         {
             get { return userArrayList; }
         }
@@ -42,7 +42,7 @@ namespace ConsoleApplication2
 
         
 
-        public static Boolean contains(String account)
+        public Boolean contains(String account)
         {
             foreach (User u in userArrayList) {
                 if (u.Account.Equals(account))
@@ -52,13 +52,13 @@ namespace ConsoleApplication2
             return false;
         }
 
-        public static Boolean contains(User user)
+        public Boolean contains(User user)
         {
             return contains(user.Account);
         }
 
 
-        public static Boolean addUser(User user)
+        public Boolean addUser(User user)
         {
             if (contains(user))
                 return false;
@@ -68,7 +68,7 @@ namespace ConsoleApplication2
             return true;
         }
 
-        public static Boolean removeUser(User user)
+        public Boolean removeUser(User user)
         {
             if (!contains(user))
                 return false;
@@ -86,7 +86,7 @@ namespace ConsoleApplication2
         }
 
 
-        public static User getUserByAcct(String acct)
+        public User getUserByAcct(String acct)
         {
             foreach (User u in userArrayList) {
                 if (u.Account.Equals(acct))
@@ -98,7 +98,7 @@ namespace ConsoleApplication2
 
 
         //return "User" ArrayList
-        public static ArrayList getOnlineUsers()
+        public ArrayList getOnlineUsers()
         {
             ArrayList onlineUsers = new ArrayList();
 

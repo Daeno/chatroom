@@ -28,3 +28,9 @@ D:\Documents\Github\chatroom\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
 D:\Documents\Github\chatroom\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
 D:\Documents\Github\chatroom\ChatServer\ChatServer\bin\Debug\ChatServer.exe
 D:\Documents\Github\chatroom\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\bin\Debug\ChatServer.exe.config
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
