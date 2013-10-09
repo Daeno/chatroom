@@ -41,7 +41,7 @@ namespace ChatServer
     class Program
     {
         //改這個值，true->127.0.0.1 ; false->"140.112.18.XXX"
-        private static readonly bool isLocalhost = false;
+        private static readonly bool isLocalhost = true;
 
         private static readonly string localhostIP_str = "127.0.0.1";
         private static readonly int svrPort = 8888;

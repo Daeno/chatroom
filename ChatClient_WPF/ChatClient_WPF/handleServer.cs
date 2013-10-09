@@ -13,11 +13,20 @@ namespace ChatClient_WPF
 {
     public class handleServer
     {
+        //these are all for debugging ////////
+        public static int handleServerCount = 0;
+        public int handleServerNum = 0;
+        public static int handleServerServive = 0;
+        ////////////////////////////////////////
+
+
         TcpClient clientSocket;
         NetworkStream netstream;
         Window window;
         string ctName;  //帳號
         char spCh;   //切割字符
+        private Boolean isWorking;
+
         public void start(TcpClient tc,string uln, char sp, Window ww)
         {
             clientSocket = tc;
@@ -26,6 +35,13 @@ namespace ChatClient_WPF
             window = ww;
             Thread ctThread = new Thread(getMessage);
             ctThread.Start();
+            isWorking = true;
+
+            //debug
+            //MessageBox.Show("New handleServer !" + handleServerCount.ToString());
+            handleServerNum = handleServerCount;
+            handleServerCount++;
+            handleServerServive++;
         }
 
         private void getMessage()
@@ -47,12 +63,13 @@ namespace ChatClient_WPF
 
                         MsgType ty = ChatClient_WPF.MainWindow.parseMsg(ref inData);
                         message = System.Text.Encoding.ASCII.GetString(inData);
+
+
                         string[] commands = message.Split(spCh);
                         switch(ty)
                         {
 
                             case MsgType.S_MSG_FROM_BCGROUP:
-                                MessageBox.Show("get msg from server");
                                 int bcgp = int.Parse(commands[0]);
                                 ((MainWindow)window).msg(commands[1]);
                                 break;
@@ -73,7 +90,6 @@ namespace ChatClient_WPF
                                 break;
 
                             case MsgType.S_LOGIN_SUCC:
-                                MessageBox.Show("login succ  by serverhandler");
                                 close = true;
                                 ((LoginWindow)window).Dispatcher.Invoke(new Action(((LoginWindow)window).loginSucc));
                                 break;
@@ -93,16 +109,25 @@ namespace ChatClient_WPF
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.ToString());
+                    //MessageBox.Show(e.ToString());
                     return;
-                }
-            }
+                } // end catch
+
+                handleServerServive--;
+            }//end while        
+
+            isWorking = false;
         }
 
 
         public void changeWindow(Window newWindow)
         {
             window = newWindow;
+        }
+
+        public Boolean IsWorking
+        {
+            get { return isWorking; }
         }
     }
 }

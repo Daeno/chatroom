@@ -51,19 +51,18 @@ namespace ChatClient_WPF
         private const string password_invalid_str = "密碼要6個字以上哦";
         private const string registering_str = "註冊中...";
         private const string loginning_str = "登入中...";
+        private const string connect_error_str = "連線出了點問題....";
 
 
         public LoginWindow()
         {
            InitializeComponent();
            initComboBoxes();
+
+           
+
         }
 
-
-        public bool connectToServer()
-        { 
-            return clientSocket.Connected; 
-        }
 
 
         private void buttonRegister_Click(object sender, RoutedEventArgs e)
@@ -74,6 +73,8 @@ namespace ChatClient_WPF
                 return;
 
             try {
+                disableControls();
+
                 showResult(registering_str);
                 byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh + spCh).ToCharArray());
                 sendData(outdata, MsgType.C_ASK_REGISTER);
@@ -82,6 +83,7 @@ namespace ChatClient_WPF
                 handleSvr.start(clientSocket, account, spCh, this);
             }
             catch (Exception ex) {
+                enableControls();
                 MessageBox.Show(ex.ToString());
             }
         }
@@ -95,6 +97,8 @@ namespace ChatClient_WPF
                 return;
 
             try {
+                disableControls();
+
                 showResult(loginning_str);
                 byte[] outdata = System.Text.Encoding.ASCII.GetBytes((account + spCh + passwordBox.Password + spCh + spCh).ToCharArray());
                 sendData(outdata, MsgType.C_ASK_LOGIN);
@@ -103,6 +107,7 @@ namespace ChatClient_WPF
                 handleSvr.start(clientSocket, account, spCh, this);
             }
             catch (Exception ex) {
+                enableControls();
                 MessageBox.Show(ex.ToString());
             }
 
@@ -125,6 +130,8 @@ namespace ChatClient_WPF
                 sendBySocket(outdata);
             }
             catch (Exception Ex) {
+                enableControls();
+                showResult(connect_error_str);
                 MessageBox.Show(Ex.ToString());
             }
         }
@@ -140,18 +147,22 @@ namespace ChatClient_WPF
 
         public void registerSucc()
         {
+            enableControls();
             clientSocket.Close();
             showResult(register_succ_str);
         }
 
         public void registerFailed(String cause)
         {
+            enableControls();
             clientSocket.Close();
             showResult(register_failed_str + '\n' + cause);
         }
 
         public void loginSucc()
         {
+            enableControls();
+
             showResult(login_succ_str);
             MainWindow mainWindow = new MainWindow(account, svrIP, svrPort, clientSocket);
             handleSvr.changeWindow(mainWindow);
@@ -162,6 +173,8 @@ namespace ChatClient_WPF
 
         public void loginFailed(String cause)
         {
+            enableControls();
+
             clientSocket.Close();
             showResult(login_failed_str + '\n' + cause);
         }
@@ -178,6 +191,27 @@ namespace ChatClient_WPF
         {
             showResult("");
         }
+
+
+
+        //when contacting with server, call this
+        private void disableControls()
+        {
+            textBoxAccount.IsEnabled = false;
+            passwordBox.IsEnabled = false;
+            buttonConnect.IsEnabled = false;
+            buttonRegister.IsEnabled = false;
+        }
+
+        //when finishing contacting with server, call this
+        private void enableControls()
+        {
+            textBoxAccount.IsEnabled = true;
+            passwordBox.IsEnabled = true;
+            buttonConnect.IsEnabled = true;
+            buttonRegister.IsEnabled = true;
+        }
+
 
 
         
