@@ -34,3 +34,9 @@ C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\obj\De
 C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
 C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\bin\Debug\ChatServer.exe
 C:\Users\steve1012\Desktop\chatroom-developing_Tang\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\bin\Debug\ChatServer.exe.config
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\NMlab\Desktop\GitHub_Tang\chatroom\ChatServer\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
