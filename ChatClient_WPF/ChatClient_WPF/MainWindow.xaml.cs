@@ -63,6 +63,8 @@ namespace ChatClient_WPF
         private IPAddress   svrIP;
         private int         svrPort;
 
+        private handleServer handleSvr;
+
         ObservableCollection<String> userList = new ObservableCollection<string>();
         ObservableCollection<String> friendList;
         ObservableCollection<String> blackList;
@@ -71,11 +73,13 @@ namespace ChatClient_WPF
         
         public MainWindow()
         {
-
+            /*
             InitializeComponent();
 
             updateUserListFromSvr();
             userListViewBinding();
+            */
+            
         }
 
         public MainWindow(String account, IPAddress svrIP, int svrPort, TcpClient cSocket) 
@@ -90,15 +94,77 @@ namespace ChatClient_WPF
             updateUserListFromSvr();
             userListViewBinding();
 
+            
+            checkSocketConnection();
+            checkHandleServer();
+
+            askForUserList(0);
         }
 
 
 
 
 
-        public bool connectToServer()
+        public bool isConnectedToServer()
         { 
             return clientSocket.Connected; 
+        }
+
+        private Boolean checkSocketConnection()
+        {
+            try {
+                if (clientSocket == null) {
+
+                    clientSocket = new TcpClient();
+                    clientSocket.Connect(svrIP, svrPort);
+                }
+                else if (!clientSocket.Connected) {
+                    clientSocket.Connect(svrIP, svrPort);
+                }
+            }
+
+            catch (Exception ex) {
+                MessageBox.Show(ex.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+        private Boolean checkHandleServer()
+        {
+            try {
+                if (handleSvr == null) {
+                    handleSvr = new handleServer();
+                    handleSvr.start(clientSocket, account, spCh, this);
+                }
+
+                else if (handleSvr.IsWorking == false){
+                    handleSvr.start(clientSocket, account, spCh, this);
+                }
+            }
+            catch (Exception ex){
+                MessageBox.Show(ex.ToString());
+                return false;
+            }
+            return true;
+        }
+
+
+        private void askForUserList(int groupNum)
+        {
+            try {
+
+                checkSocketConnection();
+                checkHandleServer();
+
+                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((groupNum.ToString() + spCh + spCh + spCh).ToCharArray());
+                encodeMsg(ref outdata, MsgType.C_ASK_USERLIST);
+                sendBySocket(outdata);
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
 
@@ -155,13 +221,19 @@ namespace ChatClient_WPF
 
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
-            if (connectToServer())
+            //debug
+            MessageBox.Show(handleServer.handleServerServive.ToString());
+            //debug
+            checkSocketConnection();
+            checkHandleServer();
+
+            if (isConnectedToServer())
             {
                 try
                 {
                     int groupNum = 0;
 
-                    string outdata = groupNum + spCh + chatText.Text.ToString() + spCh + spCh;
+                    string outdata = groupNum.ToString() + spCh + chatText.Text.ToString() + spCh + spCh;
                     byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
                     outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
                     encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
@@ -169,6 +241,8 @@ namespace ChatClient_WPF
                     sendBySocket(outSt);
                     //netstream.Write(outSt, 0, outdata.Length);
                     //netstream.Flush();
+
+                    
                 }
                 catch (Exception ex)
                 {
@@ -187,6 +261,10 @@ namespace ChatClient_WPF
 
         private void sendBySocket(byte[] data)
         {
+            //debug
+            checkSocketConnection();
+            checkHandleServer();
+
             netstream = clientSocket.GetStream();
             BinaryWriter bw = new BinaryWriter(netstream);
             bw.Write(data.Length);
@@ -311,16 +389,24 @@ namespace ChatClient_WPF
             else {
                 userListBinding.Height = 260;
                 
-                //string num = selectedNum
+                string chat_str;
+
+                string str1 = "跟這";
+                string str2 = "個人聊天~";
+                string num = selectedNum.ToString();
+
+                if (selectedNum == 1)
+                    chat_str = str1 + str2;
+                else
+                    chat_str = str1 + num + str2;
+
+                buttonNewGroup.Content = chat_str;
+                buttonNewGroup.Visibility = System.Windows.Visibility.Visible;
 
             }
 
 
         }
-
-
-
-
 
 
 
