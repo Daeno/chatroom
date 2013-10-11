@@ -53,7 +53,9 @@ namespace ChatServer
 
         public const char spCh = '\x01';
         public static Hashtable clientList = new Hashtable();
-        public static List<string>[] BCGroupList = new List<string>[20];
+        //public static List<string>[] BCGroupList = new List<string>[20];
+        public static Hashtable BCGroupMap = new Hashtable();  //取代BCGroupList，因為LIST是可以從中刪除的，但這會使LIST的編號錯亂而客戶端不知道編號改變。用HashTable有固定的代號key可使用。
+        public static int BCGroupCount = 1; //每新增新的group就+1，直接作為BCGroupMap的key使用。不減。
 
         private static UserList ul = new UserList();
 
@@ -76,7 +78,8 @@ namespace ChatServer
             Console.WriteLine("Chat server started...");
             serverSocket.Start();
 
-            for (int i = 0; i < 20; i++) BCGroupList[i] = new List<string>();
+            //for (int i = 0; i < 20; i++) BCGroupList[i] = new List<string>();
+            BCGroupMap.Add(0, new List<string>());
 
                 while (true)
                 {   
@@ -131,7 +134,7 @@ namespace ChatServer
                                     clientName = account;
 
                                     clientList.Add(clientName, clientSocket);
-                                    BCGroupList[0].Add(clientName);
+                                    ((List<string>)BCGroupMap[0]).Add(clientName);
 
                                     broadcastChat(clientName + " has joined the chatroom.", clientName, 0, false);
                                     broadcastList(0);
@@ -215,13 +218,32 @@ namespace ChatServer
         }
 
 
+        public static void addToBroadcastList(List<string> userList)
+        {
+            int groupNum = Program.BCGroupCount;
+            Program.BCGroupCount++;
+            BCGroupMap.Add(groupNum, userList);
+
+            string data = groupNum.ToString();
+            byte[] outdata = System.Text.Encoding.ASCII.GetBytes(data);
+
+            encodeMsg(ref outdata, MsgType.S_ADD_TO_BCGROUP);
+            broadcastGP(groupNum, outdata, MsgType.S_ADD_TO_BCGROUP);
+        }
+
+
+
         //send the usernames in gpn'th broadcast group to everyone in the group
         public static void broadcastList(int gpn)
         {
-            int len = BCGroupList[gpn].Count();
-            string data = len.ToString();
+            Console.WriteLine("gpn of bcList:" + gpn.ToString());
 
-            foreach (string item in BCGroupList[0])
+            int len = ((List<string>)BCGroupMap[gpn]).Count();
+            string data = gpn.ToString();
+
+            data += (spCh + len.ToString());
+
+            foreach (string item in ((List<string>)BCGroupMap[gpn]))
             {
                 data += (string)(spCh + item);
             }
@@ -254,7 +276,7 @@ namespace ChatServer
         public static void broadcastGP(int gpn,byte[] data,MsgType msgType)
         {
             
-            foreach(string item in BCGroupList[gpn])
+            foreach(string item in ((List<string>)BCGroupMap[gpn]))
             {
                 TcpClient sendingClient = (TcpClient)clientList[item];
                 NetworkStream sendingStream = sendingClient.GetStream();

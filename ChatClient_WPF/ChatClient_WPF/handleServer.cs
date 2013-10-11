@@ -68,14 +68,25 @@ namespace ChatClient_WPF
                         string[] commands = message.Split(spCh);
                         switch(ty)
                         {
+                            case MsgType.S_ADD_TO_BCGROUP:
+                                int groupNum = int.Parse(commands[0]);
+
+                                if (window.GetType().Name == "MainWindow")
+                                    ((MainWindow)window).addToBroadcastGroup(groupNum);
+                                break;
 
                             case MsgType.S_MSG_FROM_BCGROUP:
-                                int bcgp = int.Parse(commands[0]);
-                                ((MainWindow)window).msg(commands[1]);
+                                groupNum = int.Parse(commands[0]);
+                                string msg = commands[1];
+                                sendMsgToBCGroup(groupNum, msg);
+                                // ((MainWindow)window).msg(commands[0], commands[1]);
                                 break;
 
                             case MsgType.S_ONLINE_LIST:
-                                ((MainWindow)window).updateList(commands);
+                                //((MainWindow)window).updateList(commands);
+                                groupNum = int.Parse(commands[0]);
+
+                                setListOfBCGroup(groupNum, commands);
                                 break;
 
                             case MsgType.S_REGISTER_SUCC:
@@ -107,9 +118,9 @@ namespace ChatClient_WPF
                         break;
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    //MessageBox.Show(e.ToString());
+                    MessageBox.Show(ex.ToString());
                     return;
                 } // end catch
 
@@ -117,6 +128,73 @@ namespace ChatClient_WPF
             }//end while        
 
             isWorking = false;
+        }
+
+
+        private void sendMsgToBCGroup(int groupNum, string message)
+        {
+            Boolean sentToWindow = false;
+
+            if (groupNum == 0) {
+                if (window.GetType().Name == "MainWindow") {
+                    ((MainWindow)window).msg(message);
+                    return;
+                }
+            }
+            else {
+                if (window.GetType().Name == "ChatWindow"){
+                    if (((ChatWindow)window).GROUPNUM == groupNum){
+                        ((ChatWindow)window).msg(message);
+                        sentToWindow = true;
+                        return;
+                    }
+                }
+            }
+
+            if (!sentToWindow) {
+                MessageBox.Show("Got message from group: " + groupNum.ToString() + " , but I'm not in the group!");
+            }
+        }
+
+        private void setListOfBCGroup(int groupNum, string[] commands)
+        {
+            Boolean sentToWindow = false;
+
+            List<string> userList = new List<string>(commands);
+            int len = int.Parse(userList[1]);
+
+            userList.RemoveAt(0);
+            userList.RemoveAt(0);
+            userList.RemoveAt(len);
+
+            //debug
+            /*string list = "";
+            foreach (string i in userList) {
+                list += (userList.IndexOf(i).ToString() + " : " + i.ToString() + '\n');
+            }
+            MessageBox.Show(list);*/
+
+            //MessageBox.Show("add list groupNum = " + groupNum.ToString());
+
+            if (groupNum == 0) {
+                if (window.GetType().Name == "MainWindow") {
+                    ((MainWindow)window).updateList(userList);
+
+                    return;
+                }
+            }
+            else {
+                if (window.GetType().Name == "ChatWindow") {
+                    if (((ChatWindow)window).GROUPNUM == groupNum) {
+                        //((ChatWindow)window).updateList(userList);
+                        sentToWindow = true;
+                        return;
+                    }
+                }
+            }
+            if (!sentToWindow) {
+                MessageBox.Show("Got userlist from group: " + groupNum.ToString() + " , but I'm not in the group!");
+            }
         }
 
 

@@ -1,0 +1,19 @@
+﻿<Window x:Class="ChatClient_WPF.ChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Window1" Height="538.5" Width="850.5">
+    <Grid Background="#FFF9E0E0">
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBoxMsg" HorizontalAlignment="Left" Height="90" Margin="32,329,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="578" BorderBrush="#FF8D98BB"/>
+        <Button x:Name="buttonSend" Content="送出" HorizontalAlignment="Left" Margin="633,329,0,0" VerticalAlignment="Top" Width="186" Height="90" FontSize="23" Click="buttonSend_Click"/>
+        <TextBox x:Name="textBoxChatDisp" HorizontalAlignment="Left" Margin="32,34,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Height="272" Width="578" ScrollViewer.CanContentScroll="True" IsReadOnly="True" VerticalScrollBarVisibility="Visible" Background="#FFFFF7F7"/>
+        <ListView x:Name="userListview" HorizontalAlignment="Left" Height="272" Margin="633,34,0,0" VerticalAlignment="Top" Width="186">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</Window>

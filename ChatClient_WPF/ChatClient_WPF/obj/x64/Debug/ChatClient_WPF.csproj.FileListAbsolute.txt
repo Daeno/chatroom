@@ -65,5 +65,5 @@ D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatCli
 D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatClient_WPF.csproj.GenerateResource.Cache
 D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\LoginWindow.baml
 D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\LoginWindow.g.cs
-D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\Window1.baml
-D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\Window1.g.cs
+D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatWindow.baml
+D:\Documents\Github\chatroom\ChatClient_WPF\ChatClient_WPF\obj\x64\Debug\ChatWindow.g.cs

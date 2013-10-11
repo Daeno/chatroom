@@ -50,8 +50,6 @@ namespace ChatServer
                             case MsgType.C_MSG_TO_BCGROUP:
                                 string dataString = System.Text.Encoding.ASCII.GetString(data);
 
-                                //debug
-                                Console.WriteLine("dataString:" + dataString);
 
                             //only chatting
                                 string[] commands = dataString.Split(spCh);
@@ -66,8 +64,17 @@ namespace ChatServer
                                 Console.WriteLine("From " + clName + " - data: " + commands[0]);
                                 Program.broadcastChat(message, clName, groupNum, true);
                                 break;
+                            case MsgType.C_ADD_BCGROUP:
+                                dataString = System.Text.Encoding.ASCII.GetString(data);
 
-                            
+                                commands = dataString.Split(spCh);
+                                List<string> userList = new List<string>(commands);
+                                userList.RemoveAt(userList.Count - 1);
+
+                                Program.addToBroadcastList(userList);
+
+                                Console.WriteLine("get C_ADD_BDGROUP");
+                                break;
                             
                         }
                     }
@@ -83,8 +90,10 @@ namespace ChatServer
 
                     Console.WriteLine(clName + " closed");
                     Program.clientList.Remove(clName);
-                    for (int i = 0; i < 20; i++ )
-                        Program.BCGroupList[i].Remove(clName);
+                    for (int i = 0; i < Program.BCGroupCount; i++){  //(int i = 0; i < 20; i++ )
+                        if (Program.BCGroupMap.ContainsKey(i))
+                            ((List<string>)Program.BCGroupMap[i]).Remove(clName);
+                    }
                     Program.broadcastChat(clName + " has left.", clName,0, false);
                     return;
                 }

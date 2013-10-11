@@ -57,7 +57,7 @@ namespace ChatClient_WPF
         private NetworkStream netstream    = default(NetworkStream);
         //string indata = null;
         private bool          fir = true;
-        private List<string>  onlineList = new List<string>();
+        
 
         private string      account;
         private IPAddress   svrIP;
@@ -65,11 +65,17 @@ namespace ChatClient_WPF
 
         private handleServer handleSvr;
 
-        ObservableCollection<String> userList = new ObservableCollection<string>();
-        ObservableCollection<String> friendList;
-        ObservableCollection<String> blackList;
+        private Hashtable chatWindowMap = new Hashtable();
 
-        ObservableCollection<String> selectedList;
+        private List<string> onlineList = new List<string>();
+        private ObservableCollection<String> userList = new ObservableCollection<string>();
+        private ObservableCollection<String> friendList;
+        private ObservableCollection<String> blackList;
+
+        private ObservableCollection<String> selectedList;
+
+
+        
         
         public MainWindow()
         {
@@ -91,13 +97,12 @@ namespace ChatClient_WPF
             this.svrPort = svrPort;
             this.clientSocket = cSocket;
 
-            updateUserListFromSvr();
-            userListViewBinding();
 
             
             checkSocketConnection();
             checkHandleServer();
 
+            userListviewBinding();
             askForUserList(0);
         }
 
@@ -151,7 +156,7 @@ namespace ChatClient_WPF
         }
 
 
-        private void askForUserList(int groupNum)
+        public void askForUserList(int groupNum)
         {
             try {
 
@@ -188,76 +193,8 @@ namespace ChatClient_WPF
             Array.Copy(indata, 0, output, 1, indata.Length );
             indata = output;
         }
-        private void userName_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if(fir)
-                userName.Text = "";
-            fir = false;
-        }
 
-        private void buttonConnect_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            try
-            {
-                userName.IsReadOnly = true;
-                clientSocket.Connect("127.0.0.1", 8888);
-                netstream = clientSocket.GetStream();
-                byte[] outdata = System.Text.Encoding.ASCII.GetBytes((userName.Text+ spCh).ToCharArray());
-                encodeMsg(ref outdata, MsgType.C_ASK_REGISTER);
 
-                sendBySocket(outdata);
-                //netstream.Write(outdata, 0, outdata.Length);
-                //netstream.Flush();
-                handleServer hs = new handleServer();
-                hs.start(clientSocket, userName.Text.ToString(), spCh,this);
-            }
-            catch
-            {
-                MessageBox.Show("Something's Wrong!");
-            }
-             */
-        }
-
-        private void buttonSend_Click(object sender, RoutedEventArgs e)
-        {
-            //debug
-            MessageBox.Show(handleServer.handleServerServive.ToString());
-            //debug
-            checkSocketConnection();
-            checkHandleServer();
-
-            if (isConnectedToServer())
-            {
-                try
-                {
-                    int groupNum = 0;
-
-                    string outdata = groupNum.ToString() + spCh + chatText.Text.ToString() + spCh + spCh;
-                    byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
-                    outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
-                    encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
-
-                    sendBySocket(outSt);
-                    //netstream.Write(outSt, 0, outdata.Length);
-                    //netstream.Flush();
-
-                    
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-            else
-            {
-                string indata = ">> "+ userName.Text.ToString() + " says: " + chatText.Text.ToString();
-                msg(indata);
-            }
-            chatText.Text = null;
-        }
-
-        
 
         private void sendBySocket(byte[] data)
         {
@@ -281,6 +218,19 @@ namespace ChatClient_WPF
         }
 
 
+        public void getMsg(int groupNum, string message)
+        {
+            if (groupNum == 0) {
+                msg(message);
+            }
+            else if (chatWindowMap.ContainsKey(groupNum)) {
+                ChatWindow chatWindow = (ChatWindow)chatWindowMap[groupNum.ToString()];
+                chatWindow.msg(message);
+            }
+            else {
+            
+            }
+        }
 
 
         public void msg(string s)
@@ -295,6 +245,8 @@ namespace ChatClient_WPF
                 chatDisplay.Dispatcher.Invoke(DispatcherPriority.Normal, new Action<string>(msg),s);
             }
         }
+
+        /*
         public void updateList(string[] commands)
         {
             //MessageBox.Show(commands[1]);
@@ -304,90 +256,113 @@ namespace ChatClient_WPF
             onlineList.RemoveAt(len);
             //userList.r
             //onlineList.RemoveAt(onlineList.Count());
-            updateUserListFromSvr();
-            userListViewBinding();
+            updateUserListView();
+            userListviewBinding();
 
             //MessageBox.Show(userList[0]);
+        }*/
+
+
+        public void updateList(List<String> list)
+        {
+            if (userListview.CheckAccess()) {
+                userList = new ObservableCollection<string>(list.ToArray());
+                userListviewBinding();
+            }
+            else {
+                userListview.Dispatcher.Invoke(new Action(() => updateList(list)));
+            }
+
+        }
+
+
+
+
+        public void updateList(string[] commands)
+        {
+
+            /*
+            if (userListview.CheckAccess()) {
+                userList = new ObservableCollection<string>(commands);
+                int len = int.Parse(userList[0]);
+                userList.RemoveAt(0);
+                userList.RemoveAt(len);
+                userListviewBinding();
+            }
+            else {
+                userListview.Dispatcher.Invoke(new Action(() => updateList(commands)));
+            }
+             */
         }
         
+
+        public void addToBroadcastGroup(int groupNum)
+        {
+            if (CheckAccess()) {
+                ChatWindow chatWindow = new ChatWindow(account, svrIP, svrPort, clientSocket, groupNum);
+                chatWindowMap.Add(groupNum.ToString(), chatWindow);
+
+                chatWindow.Show();
+            }
+            else {
+                Dispatcher.Invoke(new Action(()=> addToBroadcastGroup(groupNum)));
+            }
+            
+        }
+
+
+
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             this.clientSocket.Close();
             base.OnClosing(e);
         }
 
-        private void chatText_KeyDown(object sender, KeyEventArgs e)
+
+
+        //這個函式可以由 updateList完全取代，故可以放棄
+        private void updateUserListView()
         {
-            if (e.Key == Key.Enter)
+            /*
+            if (userListview.CheckAccess())
             {
-                buttonSend.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent,buttonSend));
-            }
-        }
-
-        private void userName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-
-
-        private void updateUserListFromSvr()
-        {
-            
-
-            //test
-            if (userListBinding.CheckAccess())
-            {
-
-               
                  userList = new ObservableCollection<String>(onlineList.ToArray());
             }
             else
             {
-                userListBinding.Dispatcher.Invoke(new Action(updateUserListFromSvr));
-            }
+                userListview.Dispatcher.Invoke(new Action(updateUserListView));
+            }*/
         }
 
         private void updateFriendListFromSvr() { }
         private void updateBlackListFromSvr() { }
 
 
-        private void userListViewBinding()
+        private void userListviewBinding()
         {
-            if (userListBinding.CheckAccess()){
-               ListView lv = userListBinding;
+            if (userListview.CheckAccess()){
+                ListView lv = userListview;
                lv.DataContext = userList;
             }
             else {
-                userListBinding.Dispatcher.Invoke(new Action(userListViewBinding));
+                userListview.Dispatcher.Invoke(new Action(userListviewBinding));
             }
         }
 
 
 
-        //Binding needed for userListView
-        private void userListBinding_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            IList selectedItems = userListBinding.SelectedItems;
-            selectedList = new ObservableCollection<String>();
 
-            foreach (String item in selectedItems) {
-                selectedList.Add(item.ToString());
-            }
-
-            changeAddButtonLook(selectedList.Count);
-        }
 
 
         private void changeAddButtonLook(int selectedNum)
         {
             if (selectedNum == 0) {
-                userListBinding.Height = 291;
+                userListview.Height = 291;
                 buttonNewGroup.Visibility = System.Windows.Visibility.Collapsed;
             }
 
             else {
-                userListBinding.Height = 260;
+                userListview.Height = 260;
                 
                 string chat_str;
 
@@ -410,6 +385,14 @@ namespace ChatClient_WPF
 
 
 
+
+
+
+        /*============================================================
+         *    Controls 的事件處理區
+         *==============================================================*/
+
+
         private void HandleUserDoubleClick(object sender, MouseButtonEventArgs e)
         {
             //MessageBox.Show(userListBinding.SelectedItem.ToString());
@@ -417,12 +400,85 @@ namespace ChatClient_WPF
 
         private void buttonNewGroup_Click(object sender, RoutedEventArgs e)
         {
+            string data = "";
+            foreach (string s in selectedList) {
+                data += (s + spCh);
+            }
+
+            data += spCh;
+            byte[] outdata = System.Text.Encoding.ASCII.GetBytes(data);
+
+            encodeMsg(ref outdata, MsgType.C_ADD_BCGROUP);
+            sendBySocket(outdata);
+        }
+
+        //Binding needed for userListView
+        private void userListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            IList selectedItems = userListview.SelectedItems;
+            selectedList = new ObservableCollection<String>();
+
+            foreach (String item in selectedItems) {
+                selectedList.Add(item.ToString());
+            }
+
+            changeAddButtonLook(selectedList.Count);
+        }
+
+        private void chatText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) {
+                buttonSend.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, buttonSend));
+            }
+        }
+
+        private void userName_TextChanged(object sender, TextChangedEventArgs e)
+        {
 
         }
 
 
+        private void buttonSend_Click(object sender, RoutedEventArgs e)
+        {
+            //debug
+            //MessageBox.Show(handleServer.handleServerServive.ToString());
+            //debug
+            checkSocketConnection();
+            checkHandleServer();
+
+            if (isConnectedToServer()) {
+                try {
+                    int groupNum = 0;
+
+                    string outdata = groupNum.ToString() + spCh + chatText.Text.ToString() + spCh + spCh;
+                    byte[] outSt = new byte[clientSocket.ReceiveBufferSize];
+                    outSt = System.Text.Encoding.ASCII.GetBytes(outdata.ToCharArray());
+                    encodeMsg(ref outSt, MsgType.C_MSG_TO_BCGROUP);
+
+                    sendBySocket(outSt);
+                    //netstream.Write(outSt, 0, outdata.Length);
+                    //netstream.Flush();
 
 
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+            else {
+                string indata = ">> " + userName.Text.ToString() + " says: " + chatText.Text.ToString();
+                msg(indata);
+            }
+            chatText.Text = null;
+        }
 
+        /*
+        private void userName_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (fir)
+                userName.Text = "";
+            fir = false;
+        }
+        */
     }
 }
