@@ -224,7 +224,7 @@ namespace ChatClient_WPF
                 msg(message);
             }
             else if (chatWindowMap.ContainsKey(groupNum)) {
-                ChatWindow chatWindow = (ChatWindow)chatWindowMap[groupNum.ToString()];
+                ChatWindow chatWindow = (ChatWindow)chatWindowMap[groupNum];
                 chatWindow.msg(message);
             }
             else {
@@ -300,7 +300,7 @@ namespace ChatClient_WPF
         {
             if (CheckAccess()) {
                 ChatWindow chatWindow = new ChatWindow(account, svrIP, svrPort, clientSocket, groupNum);
-                chatWindowMap.Add(groupNum.ToString(), chatWindow);
+                chatWindowMap.Add(groupNum, chatWindow);
 
                 chatWindow.Show();
             }
